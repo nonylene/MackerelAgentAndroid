@@ -3,7 +3,7 @@ package net.nonylene.mackerelagent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import net.nonylene.mackerelagent.metric.getLoadAverage
+import net.nonylene.mackerelagent.metric.getLoadAverage5min
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +18,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        textView.text = "loadavg: ${getLoadAverage()}"
+        textView.text = "loadavg: ${getLoadAverage5min()}"
     }
 }
