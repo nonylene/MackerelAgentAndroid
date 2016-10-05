@@ -76,16 +76,16 @@ private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage 
 
     val allDiff = userDiff + niceDiff + systemDiff + idleDiff + iowaitDiff + irqDiff + softirqDiff + stealDiff + guestDiff + guestNiceDiff
     return CPUPercentage(
-            userDiff / allDiff,
-            niceDiff / allDiff,
-            systemDiff / allDiff,
-            idleDiff / allDiff,
-            iowaitDiff / allDiff,
-            irqDiff / allDiff,
-            softirqDiff / allDiff,
-            stealDiff / allDiff,
-            guestDiff / allDiff,
-            guestNiceDiff / allDiff
+            userDiff / allDiff * 100,
+            niceDiff / allDiff * 100,
+            systemDiff / allDiff * 100,
+            idleDiff / allDiff * 100,
+            iowaitDiff / allDiff * 100,
+            irqDiff / allDiff * 100,
+            softirqDiff / allDiff * 100,
+            stealDiff / allDiff * 100,
+            guestDiff / allDiff * 100,
+            guestNiceDiff / allDiff * 100
     )
 }
 
