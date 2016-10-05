@@ -10,7 +10,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getCPUUsageObservable(): Observable<CPUPercentage> {
+fun getCPUPercentageObservable(): Observable<CPUPercentage> {
     // map / doOnNext will be executed 2 SECONDS after initialize
     return Observable.interval(2, TimeUnit.SECONDS).map { getCurrentCPUStat() }
             // save result cache to realm
@@ -113,8 +113,7 @@ private data class CPUStat(
         val softirq: Double,
         val steal: Double,
         val guest: Double,
-        val guestNice: Double) {
-}
+        val guestNice: Double)
 
 data class CPUPercentage(
         val user: Double,
@@ -126,5 +125,4 @@ data class CPUPercentage(
         val softirq: Double,
         val steal: Double,
         val guest: Double,
-        val guestNice: Double) {
-}
+        val guestNice: Double)
