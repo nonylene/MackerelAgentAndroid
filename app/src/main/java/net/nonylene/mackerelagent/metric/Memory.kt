@@ -4,7 +4,7 @@ import java.io.File
 import java.util.*
 
 fun getMemoryInfo(): MemoryInfo {
-    val regex = Regex("(.*):\\s*(\\d+)\\skB")
+    val regex = Regex("(.*):\\s*(\\d+)\\s+kB")
     val hash = HashMap<String, Long>()
     File("/proc/meminfo").forEachLine {
         regex.find(it)?.let { result ->
@@ -13,14 +13,15 @@ fun getMemoryInfo(): MemoryInfo {
         }
     }
 
-    val free = hash["MemFree"]!!
-    val total = hash["MemTotal"]!!
-    val cached = hash["Cached"]!!
-    val buffers = hash["Cached"]!!
+    val free = hash["MemFree"]!! * 1000
+    val total = hash["MemTotal"]!! * 1000
+    val cached = hash["Cached"]!! * 1000
+    val buffers = hash["Cached"]!! * 1000
     val used = total - free - cached - buffers
-    println(hash)
-    return MemoryInfo(free, buffers, cached, used, total, hash["SwapFree"]!!, hash["SwapCached"]!!
-            , hash["Active"]!!, hash["Inactive"]!!, hash["MemAvailable"])
+    return MemoryInfo(free, buffers, cached, used, total,
+            hash["SwapFree"]!! * 1000, hash["SwapCached"]!! * 1000, hash["Active"]!! * 1000,
+            hash["Inactive"]!! * 1000, hash["MemAvailable"]?.let { it * 1000 }
+    )
 }
 
 //"MemTotal":     "total",
