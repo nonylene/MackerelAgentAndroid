@@ -23,7 +23,7 @@ fun getCPUPercentageObservable(): Observable<CPUPercentage> {
             // initial value will be evaluated immediately
             .scan(null to getInitialCPUStat(), { beforePair: Pair<CPUPercentage?, CPUStat>, after ->
                 createCPUPercentage(beforePair.second, after) to after
-            }).skip(1).take(4)
+            }).skip(1)
             // skip first -> nonnull
             .map { it.first!! }
             .subscribeOn(Schedulers.newThread())
