@@ -30,20 +30,16 @@ class MainActivity : AppCompatActivity() {
                     interfaceDeltas to cpuPercentage
                 })
                 .retryWhen { observable ->
-                    // remove realm cache
+                    // retry once
                     observable.doOnNext {
+                        // remove realm cache
                         Realm.getDefaultInstance().executeTransaction(Realm::deleteAll)
-                    }
-                    observable.take(1)
+                    }.take(1)
                 }
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
+                .subscribe {
                     textView.text = "$loadavgText\n$memText\ninterface: ${it.first}\ncpu: ${it.second}"
-                }, { error ->
-                    error.printStackTrace()
-                    // remove realm cache
-//                    Realm.getDefaultInstance().executeTransactionAsync(Realm::deleteAll)
-                })
+                }
     }
 }
