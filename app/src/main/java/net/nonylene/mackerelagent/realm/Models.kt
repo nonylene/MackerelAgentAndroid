@@ -20,11 +20,10 @@ open class RealmCPUStat : RealmObject() {
     open var timeStamp = Date(0)
 }
 
-open class RealmInterfaceStats: RealmObject() {
+open class RealmInterfaceStats : RealmObject() {
     open var stats = RealmList<RealmInterfaceStat>()
     @Index
     open var timeStamp = Date(0)
-
 }
 
 open class RealmInterfaceStat : RealmObject() {
@@ -48,3 +47,24 @@ open class RealmInterfaceStat : RealmObject() {
     open var timeStamp = Date(0)
 }
 
+open class RealmDiskStat : RealmObject() {
+    open var name = ""
+    open var reads = 0.0
+    open var readsMerged = 0.0
+    open var sectorsRead = 0.0
+    open var readTime = 0.0
+    open var writes = 0.0
+    open var writesMerged = 0.0
+    open var sectorsWritten = 0.0
+    open var writeTime = 0.0
+    open var ioInProgress = 0.0
+    open var ioTime = 0.0
+    open var ioTimeWeighted = 0.0
+    open var timeStamp = Date(0)
+}
+
+open class RealmDiskStats : RealmObject() {
+    open var stats = RealmList<RealmDiskStat>()
+    @Index
+    open var timeStamp = Date(0)
+}
