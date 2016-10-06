@@ -28,8 +28,11 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
             // initial value will be evaluated immediately
             // use lambda to get latest realm result after retry
             .scanWith({ null to getInitialInterfaceStats() }, { beforePair: Pair<List<InterfaceDelta>?, List<InterfaceStat>>, after ->
-                beforePair.second.mapIndexed { i, interfaceStat ->
-                    createInterfaceDelta(interfaceStat, after[i])
+                val beforeList = beforePair.second
+                after.mapNotNull { afterStat ->
+                    beforeList.find { it.name == afterStat.name }?.let { beforeStat ->
+                        createInterfaceDelta(beforeStat, afterStat)
+                    }
                 } to after
             }).skip(1)
             // skip first -> nonnull
@@ -45,8 +48,10 @@ private fun getCurrentInterfaceStats(): List<InterfaceStat> {
             .filter { it.size == 2 }
             // remove loopback
             .filter { it[0] != "lo" }
-            .map {
+            .mapNotNull {
                 val values = it[1].split(Regex("\\s+")).map(String::toDouble)
+                // all zero -> remove data
+                if (values.all { it == 0.0 }) return@mapNotNull null
                 InterfaceStat(it[0].trim(),
                         values[0], values[1], values[2], values[3], values[4], values[5], values[6],
                         values[7], values[8], values[9], values[10], values[11], values[12], values[13],
