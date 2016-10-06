@@ -113,7 +113,10 @@ private data class CPUStat(
         val softirq: Double,
         val steal: Double,
         val guest: Double,
-        val guestNice: Double)
+        val guestNice: Double
+)
+
+// metrics: https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/cpuusage.go
 
 data class CPUPercentage(
         val user: Double,
@@ -125,4 +128,6 @@ data class CPUPercentage(
         val softirq: Double,
         val steal: Double,
         val guest: Double,
-        val guestNice: Double)
+        // unused now
+        val guestNice: Double
+)
