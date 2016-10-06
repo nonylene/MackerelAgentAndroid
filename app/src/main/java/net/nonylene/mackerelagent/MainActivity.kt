@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import net.nonylene.mackerelagent.metric.getCPUPercentageObservable
 import net.nonylene.mackerelagent.metric.getLoadAverage5min
+import net.nonylene.mackerelagent.metric.getMemoryInfo
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,9 +20,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        val memText = "memory: ${getMemoryInfo()}"
         val loadavgText = "loadavg: ${getLoadAverage5min()}"
         getCPUPercentageObservable().subscribe {
-            textView.text = "$loadavgText \ncpu: $it"
+            textView.text = "$loadavgText\n$memText\ncpu: $it"
         }
     }
 }
