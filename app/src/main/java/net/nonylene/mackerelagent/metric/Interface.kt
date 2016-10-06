@@ -26,7 +26,8 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
                 }
             }
             // initial value will be evaluated immediately
-            .scan(null to getInitialInterfaceStats(), { beforePair: Pair<List<InterfaceDelta>?, List<InterfaceStat>>, after ->
+            // use lambda to get latest realm result after retry
+            .scanWith({ null to getInitialInterfaceStats() }, { beforePair: Pair<List<InterfaceDelta>?, List<InterfaceStat>>, after ->
                 beforePair.second.mapIndexed { i, interfaceStat ->
                     createInterfaceDelta(interfaceStat, after[i])
                 } to after
