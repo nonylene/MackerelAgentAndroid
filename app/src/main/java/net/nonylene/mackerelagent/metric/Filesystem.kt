@@ -42,10 +42,11 @@ private fun getToyboxDfStats(): List<FileSystemStat> {
             .map { it.split(Regex("\\s+")) }
             .filter { it[0].contains("/dev/") }
             .map {
+                val used = it[2].toLong() * 1024
                 FileSystemStat(
                         it[0].removePrefix("/dev/"),
-                        it[2].toLong() * 1024,
-                        it[3].toLong() * 1024
+                        it[2].toLong() * 1024 + used,
+                        used
                 )
             }
 }
@@ -68,8 +69,8 @@ private fun getToolboxDfStats(): List<FileSystemStat> {
             .map {
                 FileSystemStat(
                         it[0],
-                        restoreBytes(it[2]),
-                        restoreBytes(it[3])
+                        restoreBytes(it[1]),
+                        restoreBytes(it[2])
                 )
             }
 }
@@ -84,9 +85,10 @@ private fun restoreBytes(value: String): Long {
     }).toLong()
 }
 
+//todo: sanitize
 data class FileSystemStat(
         val name: String,
-        val used: Long,
-        val available: Long
+        val size: Long,
+        val used: Long
 )
 
