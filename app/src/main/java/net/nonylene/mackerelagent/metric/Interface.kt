@@ -69,13 +69,13 @@ private fun getInitialInterfaceStats(): List<InterfaceStat> {
     }
 
     // recent stat 1.5 minutes before or later
-    val recentStats = Realm.getDefaultInstance()
-            .where(RealmInterfaceStats::class.java)
-            .greaterThanOrEqualTo("timeStamp", tenMinutesBefore.time)
-            .findAllSorted("timeStamp", Sort.DESCENDING)
-            .firstOrNull()
-
-    return recentStats?.let { it.stats.map(::convertFromRealmInterfaceStat) } ?: getCurrentInterfaceStats()
+    Realm.getDefaultInstance().use {
+        val recentStats = it.where(RealmInterfaceStats::class.java)
+                .greaterThanOrEqualTo("timeStamp", tenMinutesBefore.time)
+                .findAllSorted("timeStamp", Sort.DESCENDING)
+                .firstOrNull()
+        return recentStats?.let { it.stats.map(::convertFromRealmInterfaceStat) } ?: getCurrentInterfaceStats()
+    }
 }
 
 private fun convertFromRealmInterfaceStat(stat: net.nonylene.mackerelagent.realm.RealmInterfaceStat): InterfaceStat {

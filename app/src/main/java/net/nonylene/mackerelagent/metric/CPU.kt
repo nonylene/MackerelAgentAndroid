@@ -46,13 +46,13 @@ private fun getInitialCPUStat(): CPUStat {
     }
 
     // recent stat 1.5 minutes before or later
-    val recentStat = Realm.getDefaultInstance()
-            .where(RealmCPUStat::class.java)
-            .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
-            .findAllSorted("timeStamp", Sort.DESCENDING)
-            .firstOrNull()
-
-    return recentStat?.let(::convertFromRealmCPUStat) ?: getCurrentCPUStat()
+    Realm.getDefaultInstance().use {
+        val recentStat = it.where(RealmCPUStat::class.java)
+                .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
+                .findAllSorted("timeStamp", Sort.DESCENDING)
+                .firstOrNull()
+        return recentStat?.let(::convertFromRealmCPUStat) ?: getCurrentCPUStat()
+    }
 }
 
 private fun convertFromRealmCPUStat(stat: RealmCPUStat): CPUStat {
