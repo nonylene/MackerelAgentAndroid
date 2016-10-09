@@ -1,7 +1,6 @@
 package net.nonylene.mackerelagent.metric
 
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.Sort
@@ -83,8 +82,7 @@ private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage 
             irqDiff / allDiff * 100,
             softirqDiff / allDiff * 100,
             stealDiff / allDiff * 100,
-            guestDiff / allDiff * 100,
-            guestNiceDiff / allDiff * 100
+            guestDiff / allDiff * 100
     )
 }
 
@@ -116,17 +114,24 @@ private data class CPUStat(
 )
 
 // metrics: https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/cpuusage.go
-
+@MetricPrefix("cpu")
 data class CPUPercentage(
+        @MetricVariable("user.percentage")
         val user: Double,
+        @MetricVariable("nice.percentage")
         val nice: Double,
+        @MetricVariable("system.percentage")
         val system: Double,
+        @MetricVariable("idle.percentage")
         val idle: Double,
+        @MetricVariable("iowait.percentage")
         val iowait: Double,
+        @MetricVariable("irq.percentage")
         val irq: Double,
+        @MetricVariable("softirq.percentage")
         val softirq: Double,
+        @MetricVariable("steal.percentage")
         val steal: Double,
-        val guest: Double,
-        // unused now
-        val guestNice: Double
-)
+        @MetricVariable("guest.percentage")
+        val guest: Double
+) : DefaultMetric

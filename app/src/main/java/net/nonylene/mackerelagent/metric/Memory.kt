@@ -35,17 +35,28 @@ fun getMemoryInfo(): MemoryInfo {
 //"SwapTotal":    "swap_total",
 //"SwapFree":     "swap_free",
 
+@MetricPrefix("memory")
 data class MemoryInfo(
+        @MetricVariable("free")
         val free: Long,
+        @MetricVariable("buffers")
         val buffers: Long,
+        @MetricVariable("cached")
         val cached: Long,
+        @MetricVariable("used")
         val used: Long,
+        @MetricVariable("total")
         val total: Long,
+        @MetricVariable("swap_free")
         val swapFree: Long,
+        @MetricVariable("swap_cached")
         val swapCached: Long,
         // additional metrics (https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/memory.go)
+        @MetricVariable("active")
         val active: Long,
+        @MetricVariable("inactive")
         val inactive: Long,
         // after linux kernel version 3.14 (KitKat: 4.4)
+        @MetricVariable("available")
         val available: Long?
-)
+) : DefaultMetric

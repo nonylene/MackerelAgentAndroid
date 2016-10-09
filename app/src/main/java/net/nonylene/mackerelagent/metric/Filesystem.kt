@@ -86,9 +86,12 @@ private fun restoreBytes(value: String): Long {
 }
 
 //todo: sanitize
+@MetricPrefix("filesystem")
 data class FileSystemStat(
+        @MetricName
         val name: String,
+        @MetricVariable("size")
         val size: Long,
+        @MetricVariable("used")
         val used: Long
-)
-
+): DefaultMetric
