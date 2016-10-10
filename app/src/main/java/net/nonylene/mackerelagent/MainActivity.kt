@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                         Realm.getDefaultInstance().executeTransaction(Realm::deleteAll)
                     }
                 }
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     textView.text = "$loadavgText\n$memText\ninterface: ${it.first.first.first}\n" +

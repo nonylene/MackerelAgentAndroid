@@ -25,7 +25,7 @@ fun getCPUPercentageObservable(): Observable<CPUPercentage> {
             }).skip(1)
             // skip first -> nonnull
             .map { it.first!! }
-            .subscribeOn(Schedulers.newThread())
+            .subscribeOn(Schedulers.io())
 }
 
 private fun getCurrentCPUStat(): CPUStat {

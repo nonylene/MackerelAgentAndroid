@@ -37,8 +37,7 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
             }).skip(1)
             // skip first -> nonnull
             .map { it.first!! }
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
 }
 
 private fun getCurrentInterfaceStats(): List<InterfaceStat> {

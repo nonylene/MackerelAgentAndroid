@@ -38,7 +38,7 @@ fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
             }).skip(1)
             // skip first -> nonnull
             .map { it.first!! }
-            .subscribeOn(Schedulers.newThread())
+            .subscribeOn(Schedulers.io())
 }
 
 private fun getCurrentDiskStats(): List<DiskStat> {

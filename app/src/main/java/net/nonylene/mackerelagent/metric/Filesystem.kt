@@ -9,7 +9,7 @@ import io.reactivex.schedulers.Schedulers
 fun getFileSystemStatsObservable(): Observable<List<FileSystemStat>> {
     return Observable.create(ObservableOnSubscribe<List<FileSystemStat>> { subscriber ->
         subscriber.onNext(getFileSystemStats())
-    }).subscribeOn(Schedulers.newThread())
+    }).subscribeOn(Schedulers.io())
 }
 
 private fun getFileSystemStats(): List<FileSystemStat> {
