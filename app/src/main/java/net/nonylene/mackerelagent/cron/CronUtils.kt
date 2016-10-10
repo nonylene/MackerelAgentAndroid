@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 
-fun createAlarm(context: Context, afterMills: Long) {
+fun createAlarm(context: Context, afterMills: Long = 40 * 1000) {
     val sender = createAlarmReceiverIntent(context)
     val alarmManager = context.getAlarmManager()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

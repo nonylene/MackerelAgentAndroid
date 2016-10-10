@@ -13,7 +13,7 @@ class GatherMetricsService(name: String) : IntentService(name) {
     override fun onHandleIntent(intent: Intent?) {
         try {
             println("handle!")
-            createAlarm(applicationContext, 40 * 1000)
+            createAlarm(applicationContext)
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
         }
