@@ -18,6 +18,7 @@ fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
             .doOnNext { origStats ->
                 Realm.getDefaultInstance().executeTransactionAsync { realm ->
                     realm.delete(RealmDiskStats::class.java)
+                    realm.delete(RealmDiskStat::class.java)
                     with(realm.createObject(RealmDiskStats::class.java)) {
                         origStats.map { createRealmDiskStat(it, realm) }.forEach {
                             stats.add(it)

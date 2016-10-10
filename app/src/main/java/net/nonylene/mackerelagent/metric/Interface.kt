@@ -1,10 +1,10 @@
 package net.nonylene.mackerelagent.metric
 
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.Sort
+import net.nonylene.mackerelagent.realm.RealmInterfaceStat
 import net.nonylene.mackerelagent.realm.RealmInterfaceStats
 import java.io.File
 import java.util.*
@@ -17,6 +17,7 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
             .doOnNext { origStats ->
                 Realm.getDefaultInstance().executeTransactionAsync { realm ->
                     realm.delete(RealmInterfaceStats::class.java)
+                    realm.delete(RealmInterfaceStat::class.java)
                     with(realm.createObject(RealmInterfaceStats::class.java)) {
                         origStats.map { createRealmInterfaceStat(it, realm) }.forEach {
                             stats.add(it)
