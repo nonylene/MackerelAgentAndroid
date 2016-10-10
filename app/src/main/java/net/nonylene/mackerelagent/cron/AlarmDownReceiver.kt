@@ -1,5 +1,13 @@
 package net.nonylene.mackerelagent.cron
 
-/**
- * Created by ken on 2016-10-11.
- */
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+
+class AlarmDownReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context, intent: Intent) {
+        createAlarm(context)
+    }
+
+}
