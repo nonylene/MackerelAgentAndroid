@@ -143,12 +143,13 @@ private data class InterfaceStat(
 )
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/interface.go
+@Suppress("unused")
 @MetricPrefix("interface")
-data class InterfaceDelta(
+class InterfaceDelta(
         @MetricName
         val name: String,
         @MetricVariable("rxBytes.delta")
         val receiveBytes: Double,
         @MetricVariable("txBytes.delta")
         val transmitPackets: Double
-)
+): Metric.DefaultMetric()

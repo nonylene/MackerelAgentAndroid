@@ -114,8 +114,9 @@ private data class CPUStat(
 )
 
 // metrics: https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/cpuusage.go
+@Suppress("unused")
 @MetricPrefix("cpu")
-data class CPUPercentage(
+class CPUPercentage(
         @MetricVariable("user.percentage")
         val user: Double,
         @MetricVariable("nice.percentage")
@@ -134,4 +135,4 @@ data class CPUPercentage(
         val steal: Double,
         @MetricVariable("guest.percentage")
         val guest: Double
-) : DefaultMetric
+) : Metric.DefaultMetric()

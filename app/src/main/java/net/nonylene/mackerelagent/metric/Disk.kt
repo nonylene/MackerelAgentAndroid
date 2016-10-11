@@ -130,12 +130,13 @@ private data class DiskStat(
 )
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/disk.go
+@Suppress("unused")
 @MetricPrefix("disk")
-data class DiskDelta(
+class DiskDelta(
         @MetricName
         val name: String,
         @MetricVariable("reads.delta")
         val reads: Double,
         @MetricVariable("writes.delta")
         val writes: Double
-) : DefaultMetric
+) : Metric.DefaultMetric()

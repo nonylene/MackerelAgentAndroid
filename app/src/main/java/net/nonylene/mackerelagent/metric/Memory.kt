@@ -35,8 +35,9 @@ fun getMemoryInfo(): MemoryInfo {
 //"SwapTotal":    "swap_total",
 //"SwapFree":     "swap_free",
 
+@Suppress("unused")
 @MetricPrefix("memory")
-data class MemoryInfo(
+class MemoryInfo(
         @MetricVariable("free")
         val free: Long,
         @MetricVariable("buffers")
@@ -59,4 +60,4 @@ data class MemoryInfo(
         // after linux kernel version 3.14 (KitKat: 4.4)
         @MetricVariable("available")
         val available: Long?
-) : DefaultMetric
+) : Metric.DefaultMetric()
