@@ -6,6 +6,7 @@ import io.realm.Realm
 import io.realm.Sort
 import net.nonylene.mackerelagent.realm.RealmInterfaceStat
 import net.nonylene.mackerelagent.realm.RealmInterfaceStats
+import net.nonylene.mackerelagent.realm.createRealmInterfaceStats
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,16 +15,11 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentInterfaceStats() }
             // save result cache to realm
-            .doOnNext { origStats ->
+            .doOnNext { stats ->
                 Realm.getDefaultInstance().executeTransactionAsync { realm ->
                     realm.delete(RealmInterfaceStats::class.java)
                     realm.delete(RealmInterfaceStat::class.java)
-                    with(realm.createObject(RealmInterfaceStats::class.java)) {
-                        origStats.map { createRealmInterfaceStat(it, realm) }.forEach {
-                            stats.add(it)
-                        }
-                        timeStamp = origStats.first().timeStamp
-                    }
+                    realm.createRealmInterfaceStats(stats)
                 }
             }
             // initial value will be evaluated immediately
@@ -74,18 +70,8 @@ private fun getInitialInterfaceStats(): List<InterfaceStat> {
                 .greaterThanOrEqualTo("timeStamp", tenMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
-        return recentStats?.let { it.stats.map(::convertFromRealmInterfaceStat) } ?: getCurrentInterfaceStats()
+        return recentStats?.let { it.stats.map(RealmInterfaceStat::createInterfaceStat) } ?: getCurrentInterfaceStats()
     }
-}
-
-private fun convertFromRealmInterfaceStat(stat: net.nonylene.mackerelagent.realm.RealmInterfaceStat): InterfaceStat {
-    return InterfaceStat(stat.name,
-            stat.receiveBytes, stat.receivePackets, stat.receiveErrs, stat.receiveDrop,
-            stat.receiveFifo, stat.receiveFrame, stat.receiveCompressed, stat.receiveMulticast,
-            stat.transmitBytes, stat.transmitPackets, stat.transmitErrs, stat.transmitDrop,
-            stat.transmitFifo, stat.transmitColls, stat.transmitCarrier, stat.transmitCompressed,
-            stat.timeStamp
-    )
 }
 
 private fun createInterfaceDelta(before: InterfaceStat, after: InterfaceStat): InterfaceDelta {
@@ -98,30 +84,7 @@ private fun createInterfaceDelta(before: InterfaceStat, after: InterfaceStat): I
     return InterfaceDelta(receiveDiff / secDiff, transmitDiff / secDiff, after.name, after.timeStamp)
 }
 
-private fun createRealmInterfaceStat(interfaceStat: InterfaceStat, realm: Realm): net.nonylene.mackerelagent.realm.RealmInterfaceStat {
-    return realm.createObject(net.nonylene.mackerelagent.realm.RealmInterfaceStat::class.java).apply {
-        name = interfaceStat.name
-        receiveBytes = interfaceStat.receiveBytes
-        receivePackets = interfaceStat.receivePackets
-        receiveErrs = interfaceStat.receiveErrs
-        receiveDrop = interfaceStat.receiveDrop
-        receiveFifo = interfaceStat.receiveFifo
-        receiveFrame = interfaceStat.receiveFrame
-        receiveCompressed = interfaceStat.receiveCompressed
-        receiveMulticast = interfaceStat.receiveMulticast
-        transmitBytes = interfaceStat.transmitBytes
-        transmitPackets = interfaceStat.transmitPackets
-        transmitErrs = interfaceStat.transmitErrs
-        transmitDrop = interfaceStat.transmitDrop
-        transmitFifo = interfaceStat.transmitFifo
-        transmitColls = interfaceStat.transmitColls
-        transmitCarrier = interfaceStat.transmitCarrier
-        transmitCompressed = interfaceStat.transmitCompressed
-        timeStamp = interfaceStat.timeStamp
-    }
-}
-
-private data class InterfaceStat(
+data class InterfaceStat(
         val name: String,
         val receiveBytes: Double,
         val receivePackets: Double,
@@ -151,4 +114,4 @@ class InterfaceDelta(
         val transmitPackets: Double,
         name: String,
         timeStamp: Date
-): MetricsContainer.Default("interface", name, timeStamp)
+) : MetricsContainer.Default("interface", name, timeStamp)

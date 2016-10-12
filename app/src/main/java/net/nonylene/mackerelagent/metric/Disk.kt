@@ -7,6 +7,7 @@ import io.realm.Realm
 import io.realm.Sort
 import net.nonylene.mackerelagent.realm.RealmDiskStat
 import net.nonylene.mackerelagent.realm.RealmDiskStats
+import net.nonylene.mackerelagent.realm.createRealmDiskStats
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -15,16 +16,11 @@ fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentDiskStats() }
             // save result cache to realm
-            .doOnNext { origStats ->
+            .doOnNext { stats ->
                 Realm.getDefaultInstance().executeTransactionAsync { realm ->
                     realm.delete(RealmDiskStats::class.java)
                     realm.delete(RealmDiskStat::class.java)
-                    with(realm.createObject(RealmDiskStats::class.java)) {
-                        origStats.map { createRealmDiskStat(it, realm) }.forEach {
-                            stats.add(it)
-                        }
-                        timeStamp = origStats.first().timeStamp
-                    }
+                    realm.createRealmDiskStats(stats)
                 }
             }
             // initial value will be evaluated immediately
@@ -74,15 +70,7 @@ private fun getInitialDiskStats(): List<DiskStat> {
             .findAllSorted("timeStamp", Sort.DESCENDING)
             .firstOrNull()
 
-    return recentStats?.let { it.stats.map(::convertFromRealmDiskStat) } ?: getCurrentDiskStats()
-}
-
-private fun convertFromRealmDiskStat(stat: RealmDiskStat): DiskStat {
-    return DiskStat(stat.name,
-            stat.reads, stat.readsMerged, stat.sectorsRead, stat.readTime,
-            stat.writes, stat.writesMerged, stat.sectorsWritten, stat.writeTime,
-            stat.ioInProgress, stat.ioTime, stat.ioTimeWeighted, stat.timeStamp
-    )
+    return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
 }
 
 private fun createDiskDelta(before: DiskStat, after: DiskStat): DiskDelta {
@@ -95,25 +83,7 @@ private fun createDiskDelta(before: DiskStat, after: DiskStat): DiskDelta {
     return DiskDelta(readsDiff / secDiff, writesDiff / secDiff, after.name, after.timeStamp)
 }
 
-private fun createRealmDiskStat(diskStat: DiskStat, realm: Realm): RealmDiskStat {
-    return realm.createObject(RealmDiskStat::class.java).apply {
-        name = diskStat.name
-        reads = diskStat.reads
-        readsMerged = diskStat.readsMerged
-        sectorsRead = diskStat.sectorsRead
-        readTime = diskStat.readTime
-        writes = diskStat.writes
-        writesMerged = diskStat.writesMerged
-        sectorsWritten = diskStat.sectorsWritten
-        writeTime = diskStat.writeTime
-        ioInProgress = diskStat.ioInProgress
-        ioTime = diskStat.ioTime
-        ioTimeWeighted = diskStat.ioTimeWeighted
-        timeStamp = diskStat.timeStamp
-    }
-}
-
-private data class DiskStat(
+data class DiskStat(
         val name: String,
         val reads: Double,
         val readsMerged: Double,

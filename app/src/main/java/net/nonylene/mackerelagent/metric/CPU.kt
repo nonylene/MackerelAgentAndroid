@@ -5,6 +5,7 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.Sort
 import net.nonylene.mackerelagent.realm.RealmCPUStat
+import net.nonylene.mackerelagent.realm.createRealmCPUStat
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ fun getCPUPercentageObservable(): Observable<CPUPercentage> {
             .doOnNext { stat ->
                 Realm.getDefaultInstance().executeTransactionAsync { realm ->
                     realm.delete(RealmCPUStat::class.java)
-                    realm.createObject(RealmCPUStat::class.java).fromCPUStat(stat)
+                    realm.createRealmCPUStat(stat)
                 }
             }
             // initial value will be evaluated immediately
@@ -50,13 +51,8 @@ private fun getInitialCPUStat(): CPUStat {
                 .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
-        return recentStat?.let(::convertFromRealmCPUStat) ?: getCurrentCPUStat()
+        return recentStat?.let(RealmCPUStat::createCPUStat) ?: getCurrentCPUStat()
     }
-}
-
-private fun convertFromRealmCPUStat(stat: RealmCPUStat): CPUStat {
-    return CPUStat(stat.user, stat.nice, stat.system, stat.idle, stat.iowait,
-            stat.irq, stat.softirq, stat.steal, stat.guest, stat.guestNice, stat.timeStamp)
 }
 
 private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage {
@@ -87,21 +83,7 @@ private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage 
     )
 }
 
-private fun RealmCPUStat.fromCPUStat(cpuStat: CPUStat) {
-    user = cpuStat.user
-    nice = cpuStat.nice
-    system = cpuStat.system
-    idle = cpuStat.idle
-    iowait = cpuStat.iowait
-    irq = cpuStat.irq
-    softirq = cpuStat.softirq
-    steal = cpuStat.steal
-    guest = cpuStat.guest
-    guestNice = cpuStat.guestNice
-    timeStamp = cpuStat.timeStamp
-}
-
-private data class CPUStat(
+data class CPUStat(
         val user: Double,
         val nice: Double,
         val system: Double,
