@@ -32,7 +32,7 @@ private fun getCurrentCPUStat(): CPUStat {
     // remove first element ("cpu")
     val values = File("/proc/stat").readLines().first().split(Regex("\\s+")).drop(1).map(String::toDouble)
     val stat = CPUStat(values[0], values[1], values[2], values[3],
-            values[4], values[5], values[6], values[7], values[8], values[9])
+            values[4], values[5], values[6], values[7], values[8], values[9], Date())
     return stat
 }
 
@@ -56,7 +56,7 @@ private fun getInitialCPUStat(): CPUStat {
 
 private fun convertFromRealmCPUStat(stat: RealmCPUStat): CPUStat {
     return CPUStat(stat.user, stat.nice, stat.system, stat.idle, stat.iowait,
-            stat.irq, stat.softirq, stat.steal, stat.guest, stat.guestNice)
+            stat.irq, stat.softirq, stat.steal, stat.guest, stat.guestNice, stat.timeStamp)
 }
 
 private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage {
@@ -82,7 +82,8 @@ private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage 
             irqDiff / allDiff * 100,
             softirqDiff / allDiff * 100,
             stealDiff / allDiff * 100,
-            guestDiff / allDiff * 100
+            guestDiff / allDiff * 100,
+            after.timeStamp
     )
 }
 
@@ -97,7 +98,7 @@ private fun RealmCPUStat.fromCPUStat(cpuStat: CPUStat) {
     steal = cpuStat.steal
     guest = cpuStat.guest
     guestNice = cpuStat.guestNice
-    timeStamp = Date()
+    timeStamp = cpuStat.timeStamp
 }
 
 private data class CPUStat(
@@ -110,12 +111,12 @@ private data class CPUStat(
         val softirq: Double,
         val steal: Double,
         val guest: Double,
-        val guestNice: Double
+        val guestNice: Double,
+        val timeStamp: Date
 )
 
 // metrics: https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/cpuusage.go
 @Suppress("unused")
-@MetricPrefix("cpu")
 class CPUPercentage(
         @MetricVariable("user.percentage")
         val user: Double,
@@ -134,5 +135,6 @@ class CPUPercentage(
         @MetricVariable("steal.percentage")
         val steal: Double,
         @MetricVariable("guest.percentage")
-        val guest: Double
-) : Metric.DefaultMetric()
+        val guest: Double,
+        timeStamp: Date
+) : MetricsContainer.Default("cpu", null, timeStamp)

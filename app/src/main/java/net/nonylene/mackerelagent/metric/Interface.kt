@@ -95,7 +95,7 @@ private fun createInterfaceDelta(before: InterfaceStat, after: InterfaceStat): I
     val receiveDiff = after.receiveBytes - before.receiveBytes
     val transmitDiff = after.transmitBytes - before.transmitBytes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
-    return InterfaceDelta(before.name, receiveDiff / secDiff, transmitDiff / secDiff)
+    return InterfaceDelta(receiveDiff / secDiff, transmitDiff / secDiff, after.name, after.timeStamp)
 }
 
 private fun createRealmInterfaceStat(interfaceStat: InterfaceStat, realm: Realm): net.nonylene.mackerelagent.realm.RealmInterfaceStat {
@@ -144,12 +144,11 @@ private data class InterfaceStat(
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/interface.go
 @Suppress("unused")
-@MetricPrefix("interface")
 class InterfaceDelta(
-        @MetricName
-        val name: String,
         @MetricVariable("rxBytes.delta")
         val receiveBytes: Double,
         @MetricVariable("txBytes.delta")
-        val transmitPackets: Double
-): Metric.DefaultMetric()
+        val transmitPackets: Double,
+        name: String,
+        timeStamp: Date
+): MetricsContainer.Default("interface", name, timeStamp)

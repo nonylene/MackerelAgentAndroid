@@ -92,7 +92,7 @@ private fun createDiskDelta(before: DiskStat, after: DiskStat): DiskDelta {
     val readsDiff = after.reads - before.reads
     val writesDiff = after.writes - before.writes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
-    return DiskDelta(before.name, readsDiff / secDiff, writesDiff / secDiff)
+    return DiskDelta(readsDiff / secDiff, writesDiff / secDiff, after.name, after.timeStamp)
 }
 
 private fun createRealmDiskStat(diskStat: DiskStat, realm: Realm): RealmDiskStat {
@@ -131,12 +131,11 @@ private data class DiskStat(
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/disk.go
 @Suppress("unused")
-@MetricPrefix("disk")
 class DiskDelta(
-        @MetricName
-        val name: String,
         @MetricVariable("reads.delta")
         val reads: Double,
         @MetricVariable("writes.delta")
-        val writes: Double
-) : Metric.DefaultMetric()
+        val writes: Double,
+        name: String,
+        timeStamp: Date
+) : MetricsContainer.Default("disk", name, timeStamp)

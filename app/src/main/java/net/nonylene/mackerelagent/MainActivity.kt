@@ -13,6 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.nonylene.mackerelagent.cron.createAlarm
 import net.nonylene.mackerelagent.metric.*
+import net.nonylene.mackerelagent.network.createMetrics
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    textView.text = createMetricsJsonMap(it).toString()
+                    textView.text = createMetrics(it).toString()
                 }
     }
 

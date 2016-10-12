@@ -16,11 +16,12 @@ fun getMemoryInfo(): MemoryInfo {
     val free = hash["MemFree"]!! * 1000
     val total = hash["MemTotal"]!! * 1000
     val cached = hash["Cached"]!! * 1000
-    val buffers = hash["Cached"]!! * 1000
+    val buffers = hash["Buffers"]!! * 1000
     val used = total - free - cached - buffers
     return MemoryInfo(free, buffers, cached, used, total,
             hash["SwapFree"]!! * 1000, hash["SwapCached"]!! * 1000, hash["Active"]!! * 1000,
-            hash["Inactive"]!! * 1000, hash["MemAvailable"]?.let { it * 1000 }
+            hash["Inactive"]!! * 1000, hash["MemAvailable"]?.let { it * 1000 },
+            Date()
     )
 }
 
@@ -36,7 +37,6 @@ fun getMemoryInfo(): MemoryInfo {
 //"SwapFree":     "swap_free",
 
 @Suppress("unused")
-@MetricPrefix("memory")
 class MemoryInfo(
         @MetricVariable("free")
         val free: Long,
@@ -59,5 +59,6 @@ class MemoryInfo(
         val inactive: Long,
         // after linux kernel version 3.14 (KitKat: 4.4)
         @MetricVariable("available")
-        val available: Long?
-) : Metric.DefaultMetric()
+        val available: Long?,
+        timeStamp: Date
+) : MetricsContainer.Default("memory", null, timeStamp)

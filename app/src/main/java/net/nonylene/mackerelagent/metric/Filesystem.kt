@@ -5,6 +5,7 @@ import android.os.Build
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 fun getFileSystemStatsObservable(): Observable<List<FileSystemStat>> {
     return Observable.create(ObservableOnSubscribe<List<FileSystemStat>> { subscriber ->
@@ -44,9 +45,10 @@ private fun getToyboxDfStats(): List<FileSystemStat> {
             .map {
                 val used = it[2].toLong() * 1024
                 FileSystemStat(
-                        it[0].removePrefix("/dev/"),
                         it[2].toLong() * 1024 + used,
-                        used
+                        used,
+                        it[0].removePrefix("/dev/"),
+                        Date()
                 )
             }
 }
@@ -68,9 +70,10 @@ private fun getToolboxDfStats(): List<FileSystemStat> {
             .map { it.split(Regex("\\s+")) }
             .map {
                 FileSystemStat(
-                        it[0],
                         restoreBytes(it[1]),
-                        restoreBytes(it[2])
+                        restoreBytes(it[2]),
+                        it[0],
+                        Date()
                 )
             }
 }
@@ -86,12 +89,11 @@ private fun restoreBytes(value: String): Long {
 }
 
 @Suppress("unused")
-@MetricPrefix("filesystem")
 class FileSystemStat(
-        @MetricName
-        val name: String,
         @MetricVariable("size")
         val size: Long,
         @MetricVariable("used")
-        val used: Long
-): Metric.DefaultMetric()
+        val used: Long,
+        name: String,
+        timeStamp: Date
+) : MetricsContainer.Default("filesystem", name, timeStamp)
