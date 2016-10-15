@@ -22,8 +22,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".cron.AlarmReceiver"/>
-        <receiver android:name=".cron.AlarmDownReceiver">
+        <receiver android:name=".receiver.AlarmReceiver"/>
+        <receiver android:name=".receiver.AlarmDownReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"
                     />
@@ -34,7 +34,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".cron.GatherMetricsService"/>
+        <service android:name=".service.GatherMetricsService"/>
     </application>
 
 </manifest>

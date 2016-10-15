@@ -1,10 +1,11 @@
-package net.nonylene.mackerelagent.cron
+package net.nonylene.mackerelagent
 
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import net.nonylene.mackerelagent.receiver.AlarmReceiver
 
 fun createAlarm(context: Context, afterMills: Long = 40 * 1000) {
     val sender = createAlarmReceiverIntent(context)

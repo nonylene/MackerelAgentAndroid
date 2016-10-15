@@ -1,8 +1,9 @@
-package net.nonylene.mackerelagent.cron
+package net.nonylene.mackerelagent.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import net.nonylene.mackerelagent.createAlarm
 
 class AlarmDownReceiver : BroadcastReceiver() {
 

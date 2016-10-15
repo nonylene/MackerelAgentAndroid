@@ -11,7 +11,7 @@ import io.reactivex.functions.Function
 import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import net.nonylene.mackerelagent.cron.createAlarm
+import net.nonylene.mackerelagent.createAlarm
 import net.nonylene.mackerelagent.metric.*
 import net.nonylene.mackerelagent.network.createMetrics
 
