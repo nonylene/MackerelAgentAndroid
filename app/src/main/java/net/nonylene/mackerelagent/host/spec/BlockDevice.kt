@@ -25,7 +25,7 @@ fun getBlockDevicesSpecs(): Map<String, BlockDeviceSpec> {
 private fun getBlockContentOrNull(blockDir: File, fileName: String): String? {
     val file = File(blockDir, fileName)
     if (file.exists()) {
-        return file.readText()
+        return file.readText().trim()
     } else {
         return null
     }
