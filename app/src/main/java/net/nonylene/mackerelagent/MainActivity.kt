@@ -12,8 +12,10 @@ import io.reactivex.functions.Function3
 import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import net.nonylene.mackerelagent.host.common.getFileSystemStats
 import net.nonylene.mackerelagent.host.metric.*
 import net.nonylene.mackerelagent.host.spec.getBlockDevicesSpecs
+import net.nonylene.mackerelagent.host.spec.getFileSystemsSpec
 import net.nonylene.mackerelagent.host.spec.getKernelSpec
 import net.nonylene.mackerelagent.network.createMetrics
 
@@ -35,15 +37,15 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val memInfo = getMemoryInfo()
         val loadavg = getLoadAverage5min()
-        val fileSystemStats = getFileSystemStats()
+        val fileSystemMCs = getFileSystemStateMCs()
         println(getKernelSpec())
         println(getBlockDevicesSpecs())
-        println(getFileSystemStats())
+        println(getFileSystemsSpec())
         disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
                 getCPUPercentageObservable(),
                 Function3 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
                             cpuPercentage: CPUPercentage ->
-                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemStats + memInfo + loadavg
+                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memInfo + loadavg
                 })
                 .retryWhen { observable ->
                     // retry once

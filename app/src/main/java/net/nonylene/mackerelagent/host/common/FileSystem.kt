@@ -2,9 +2,6 @@ package net.nonylene.mackerelagent.host.common
 
 import android.annotation.TargetApi
 import android.os.Build
-import net.nonylene.mackerelagent.host.metric.MetricVariable
-import net.nonylene.mackerelagent.host.metric.MetricsContainer
-import java.util.*
 
 // df command returns immediately (within 10 msec)
 fun getFileSystemStats(): List<FileSystemStat> {
@@ -36,15 +33,16 @@ private fun getToyboxDfStats(): List<FileSystemStat> {
             .drop(1)
             .map(String::trim)
             .map { it.split(Regex("\\s+")) }
-            .filter { it[0].contains("/dev/") }
             .map {
-                val used = it[2].toLong() * 1024
+                val used = it[2].toLong()
+                val available = it[3].toLong()
                 FileSystemStat(
-                        it[2].toLong() * 1024 + used,
+                        it[0],
+                        available + used,
                         used,
-                        it[3].toLong(),
-                        it[0].removePrefix("/dev/"),
-                        Date()
+                        available,
+                        it[4].removeSuffix("%").toDouble(),
+                        it[5]
                 )
             }
 }
@@ -65,33 +63,36 @@ private fun getToolboxDfStats(): List<FileSystemStat> {
             .map(String::trim)
             .map { it.split(Regex("\\s+")) }
             .map {
+                val name = it[0]
+                val size = restoreKBytes(it[1])
+                val used = restoreKBytes(it[2])
                 FileSystemStat(
-                        restoreBytes(it[1]),
-                        restoreBytes(it[2]),
-                        restoreBytes(it[3]),
-                        it[0],
-                        Date()
+                        name,
+                        size,
+                        used,
+                        restoreKBytes(it[3]),
+                        size.toDouble() / used.toDouble() * 100,
+                        name
                 )
             }
 }
 
 // 12.3(K,M,G) -> 12300, 12300000, 12300000000
-private fun restoreBytes(value: String): Long {
+private fun restoreKBytes(value: String): Long {
     return (value.dropLast(1).toDouble() * when (value.last()) {
-        'G' -> 1024 * 1024 * 1024
-        'M' -> 1024 * 1024
-        'K' -> 1024
+        'G' -> 1024 * 1024
+        'M' -> 1024
+        'K' -> 1
         else -> 1
     }).toLong()
 }
 
-@Suppress("unused")
-class FileSystemStat(
-        @MetricVariable("size")
-        val size: Long,
-        @MetricVariable("used")
-        val used: Long,
-        val available: Long,
-        name: String,
-        timeStamp: Date
-) : MetricsContainer.Default("filesystem", name, timeStamp)
+// all units of sizes are kByte
+data class FileSystemStat(
+        val name: String,
+        val kbSize: Long,
+        val kbUsed: Long,
+        val kbAvailable: Long,
+        val percentUsed: Double,
+        val mount: String
+)
