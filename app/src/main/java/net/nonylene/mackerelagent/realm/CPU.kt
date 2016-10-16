@@ -3,7 +3,7 @@ package net.nonylene.mackerelagent.realm
 import io.realm.Realm
 import io.realm.RealmObject
 import io.realm.annotations.Index
-import net.nonylene.mackerelagent.metric.CPUStat
+import net.nonylene.mackerelagent.host.metric.CPUStat
 import java.util.*
 
 open class RealmCPUStat : RealmObject() {

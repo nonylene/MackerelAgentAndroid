@@ -1,7 +1,7 @@
 package net.nonylene.mackerelagent.network
 
-import net.nonylene.mackerelagent.metric.MetricsContainer
-import net.nonylene.mackerelagent.metric.MetricVariable
+import net.nonylene.mackerelagent.host.metric.MetricsContainer
+import net.nonylene.mackerelagent.host.metric.MetricVariable
 import kotlin.reflect.memberProperties
 
 /**

@@ -1,4 +1,4 @@
-package net.nonylene.mackerelagent.metric
+package net.nonylene.mackerelagent.host.metric
 
 import net.nonylene.mackerelagent.network.createMetrics
 import java.util.*

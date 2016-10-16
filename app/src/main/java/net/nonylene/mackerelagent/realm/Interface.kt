@@ -4,7 +4,7 @@ import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Index
-import net.nonylene.mackerelagent.metric.InterfaceStat
+import net.nonylene.mackerelagent.host.metric.InterfaceStat
 import java.util.*
 
 open class RealmInterfaceStats : RealmObject() {

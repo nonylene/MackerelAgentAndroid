@@ -4,7 +4,7 @@ import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Index
-import net.nonylene.mackerelagent.metric.DiskStat
+import net.nonylene.mackerelagent.host.metric.DiskStat
 import java.util.*
 
 open class RealmDiskStat : RealmObject() {

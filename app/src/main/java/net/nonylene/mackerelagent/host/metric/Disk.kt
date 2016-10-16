@@ -1,4 +1,4 @@
-package net.nonylene.mackerelagent.metric
+package net.nonylene.mackerelagent.host.metric
 
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
