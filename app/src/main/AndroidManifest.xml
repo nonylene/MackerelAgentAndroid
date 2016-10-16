@@ -22,8 +22,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receiver.AlarmReceiver"/>
-        <receiver android:name=".receiver.AlarmDownReceiver">
+        <receiver android:name=".receiver.RebootUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"
                     />
@@ -34,7 +33,10 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.GatherMetricsService"/>
+        <service
+            android:name=".service.GatherMetricsService"
+            android:process=":remote"
+            />
     </application>
 
 </manifest>

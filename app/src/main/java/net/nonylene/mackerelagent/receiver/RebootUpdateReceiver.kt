@@ -5,10 +5,10 @@ import android.content.Intent
 import android.support.v4.content.WakefulBroadcastReceiver
 import net.nonylene.mackerelagent.service.GatherMetricsService
 
-class AlarmReceiver: WakefulBroadcastReceiver() {
+class RebootUpdateReceiver : WakefulBroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         startWakefulService(context, Intent(context, GatherMetricsService::class.java))
     }
-}
 
+}
