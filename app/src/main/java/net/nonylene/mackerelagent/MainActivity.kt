@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function
+import io.reactivex.functions.Function3
 import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
@@ -34,12 +35,14 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val memInfo = getMemoryInfo()
         val loadavg = getLoadAverage5min()
-        print(getKernelSpec())
-        print(getBlockDevicesSpecs())
+        val fileSystemStats = getFileSystemStats()
+        println(getKernelSpec())
+        println(getBlockDevicesSpecs())
+        println(getFileSystemStats())
         disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
-                getCPUPercentageObservable(), getFileSystemStatsObservable(),
-                Function4 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
-                            cpuPercentage: CPUPercentage, fileSystemStats: List<FileSystemStat> ->
+                getCPUPercentageObservable(),
+                Function3 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
+                            cpuPercentage: CPUPercentage ->
                     interfaceDeltas + diskDeltas + cpuPercentage + fileSystemStats + memInfo + loadavg
                 })
                 .retryWhen { observable ->

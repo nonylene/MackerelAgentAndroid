@@ -2,18 +2,10 @@ package net.nonylene.mackerelagent.host.metric
 
 import android.annotation.TargetApi
 import android.os.Build
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-fun getFileSystemStatsObservable(): Observable<List<FileSystemStat>> {
-    return Observable.create(ObservableOnSubscribe<List<FileSystemStat>> { subscriber ->
-        subscriber.onNext(getFileSystemStats())
-    }).subscribeOn(Schedulers.io())
-}
-
-private fun getFileSystemStats(): List<FileSystemStat> {
+// df command returns immediately (within 10 msec)
+fun getFileSystemStats(): List<FileSystemStat> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         getToyboxDfStats()
     } else {
@@ -25,16 +17,17 @@ private fun getFileSystemStats(): List<FileSystemStat> {
 // http://nonylene.hatenablog.jp/entry/2016/10/09/014419
 
 // example:
-// bullhead:/ $ df
-// Filesystem                                             1K-blocks     Used Available Use% Mounted on
-// tmpfs                                                     922680      428    922252   1% /dev
-// tmpfs                                                     922680        0    922680   0% /mnt
-// /dev/block/dm-0                                          2999516  2430552    552580  82% /system
-// /dev/block/dm-1                                           241908   184160     52752  78% /vendor
-// todo: send file mount path option
+// vbox86p:/ # df -Pk
+// Filesystem      1K-blocks   Used Available Use% Mounted on
+// tmpfs             1026300    444   1025856   1% /dev
+// tmpfs             1026300      0   1026300   0% /mnt
+// /dev/block/sda6   2031440 718556   1312884  36% /system
+// tmpfs             1026300      0   1026300   0% /storage
+//
+// todo: send file mount path option /
 @TargetApi(Build.VERSION_CODES.N)
 private fun getToyboxDfStats(): List<FileSystemStat> {
-    val exec = Runtime.getRuntime().exec(arrayOf("df", "-P"))
+    val exec = Runtime.getRuntime().exec(arrayOf("df", "-P", "-k"))
     exec.waitFor()
     return exec.inputStream.reader().readLines()
             // remove first header
@@ -47,6 +40,7 @@ private fun getToyboxDfStats(): List<FileSystemStat> {
                 FileSystemStat(
                         it[2].toLong() * 1024 + used,
                         used,
+                        it[3].toLong(),
                         it[0].removePrefix("/dev/"),
                         Date()
                 )
@@ -72,6 +66,7 @@ private fun getToolboxDfStats(): List<FileSystemStat> {
                 FileSystemStat(
                         restoreBytes(it[1]),
                         restoreBytes(it[2]),
+                        restoreBytes(it[3]),
                         it[0],
                         Date()
                 )
@@ -94,6 +89,7 @@ class FileSystemStat(
         val size: Long,
         @MetricVariable("used")
         val used: Long,
+        val available: Long,
         name: String,
         timeStamp: Date
 ) : MetricsContainer.Default("filesystem", name, timeStamp)
