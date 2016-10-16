@@ -12,6 +12,7 @@ import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.*
+import net.nonylene.mackerelagent.host.spec.getBlockDevicesSpecs
 import net.nonylene.mackerelagent.host.spec.getKernelSpec
 import net.nonylene.mackerelagent.network.createMetrics
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         val memInfo = getMemoryInfo()
         val loadavg = getLoadAverage5min()
         print(getKernelSpec())
+        print(getBlockDevicesSpecs())
         disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
                 getCPUPercentageObservable(), getFileSystemStatsObservable(),
                 Function4 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
