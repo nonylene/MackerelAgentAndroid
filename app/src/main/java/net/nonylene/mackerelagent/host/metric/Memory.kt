@@ -13,14 +13,14 @@ fun getMemoryInfo(): MemoryInfo {
         }
     }
 
-    val free = hash["MemFree"]!! * 1000
-    val total = hash["MemTotal"]!! * 1000
-    val cached = hash["Cached"]!! * 1000
-    val buffers = hash["Buffers"]!! * 1000
+    val free = hash["MemFree"]!! * 1024
+    val total = hash["MemTotal"]!! * 1024
+    val cached = hash["Cached"]!! * 1024
+    val buffers = hash["Buffers"]!! * 1024
     val used = total - free - cached - buffers
     return MemoryInfo(free, buffers, cached, used, total,
-            hash["SwapFree"]!! * 1000, hash["SwapCached"]!! * 1000, hash["Active"]!! * 1000,
-            hash["Inactive"]!! * 1000, hash["MemAvailable"]?.let { it * 1000 },
+            hash["SwapFree"]!! * 1024, hash["SwapCached"]!! * 1024, hash["Active"]!! * 1024,
+            hash["Inactive"]!! * 1024, hash["MemAvailable"]?.let { it * 1024 },
             Date()
     )
 }
