@@ -15,9 +15,11 @@ fun getCPUPercentageObservable(): Observable<CPUPercentage> {
     return Observable.interval(2, TimeUnit.SECONDS).map { getCurrentCPUStat() }
             // save result cache to realm
             .doOnNext { stat ->
-                Realm.getDefaultInstance().executeTransactionAsync { realm ->
-                    realm.delete(RealmCPUStat::class.java)
-                    realm.createRealmCPUStat(stat)
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        realm.delete(RealmCPUStat::class.java)
+                        realm.createRealmCPUStat(stat)
+                    }
                 }
             }
             // initial value will be evaluated immediately

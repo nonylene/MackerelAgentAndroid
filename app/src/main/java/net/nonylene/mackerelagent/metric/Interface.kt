@@ -16,10 +16,12 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentInterfaceStats() }
             // save result cache to realm
             .doOnNext { stats ->
-                Realm.getDefaultInstance().executeTransactionAsync { realm ->
-                    realm.delete(RealmInterfaceStats::class.java)
-                    realm.delete(RealmInterfaceStat::class.java)
-                    realm.createRealmInterfaceStats(stats)
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        realm.delete(RealmInterfaceStats::class.java)
+                        realm.delete(RealmInterfaceStat::class.java)
+                        realm.createRealmInterfaceStats(stats)
+                    }
                 }
             }
             // initial value will be evaluated immediately

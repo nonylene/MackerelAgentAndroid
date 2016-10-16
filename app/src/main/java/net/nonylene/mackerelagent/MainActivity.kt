@@ -11,7 +11,6 @@ import io.reactivex.functions.Function
 import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import net.nonylene.mackerelagent.createAlarm
 import net.nonylene.mackerelagent.metric.*
 import net.nonylene.mackerelagent.network.createMetrics
 
@@ -51,7 +50,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     }).doOnNext {
                         // remove realm cache
-                        Realm.getDefaultInstance().executeTransaction(Realm::deleteAll)
+                        Realm.getDefaultInstance().use {
+                            it.executeTransaction(Realm::deleteAll)
+                        }
                     }
                 }
                 .subscribeOn(Schedulers.io())

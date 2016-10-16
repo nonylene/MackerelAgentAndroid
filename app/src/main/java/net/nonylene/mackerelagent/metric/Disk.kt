@@ -1,7 +1,6 @@
 package net.nonylene.mackerelagent.metric
 
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.Sort
@@ -17,10 +16,12 @@ fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentDiskStats() }
             // save result cache to realm
             .doOnNext { stats ->
-                Realm.getDefaultInstance().executeTransactionAsync { realm ->
-                    realm.delete(RealmDiskStats::class.java)
-                    realm.delete(RealmDiskStat::class.java)
-                    realm.createRealmDiskStats(stats)
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        realm.delete(RealmDiskStats::class.java)
+                        realm.delete(RealmDiskStat::class.java)
+                        realm.createRealmDiskStats(stats)
+                    }
                 }
             }
             // initial value will be evaluated immediately
@@ -64,13 +65,13 @@ private fun getInitialDiskStats(): List<DiskStat> {
     }
 
     // recent stat 1.5 minutes before or later
-    val recentStats = Realm.getDefaultInstance()
-            .where(RealmDiskStats::class.java)
-            .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
-            .findAllSorted("timeStamp", Sort.DESCENDING)
-            .firstOrNull()
-
-    return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
+    Realm.getDefaultInstance().use {
+        val recentStats = it.where(RealmDiskStats::class.java)
+                        .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
+                        .findAllSorted("timeStamp", Sort.DESCENDING)
+                        .firstOrNull()
+        return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
+    }
 }
 
 private fun createDiskDelta(before: DiskStat, after: DiskStat): DiskDelta {
