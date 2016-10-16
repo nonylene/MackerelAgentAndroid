@@ -1,7 +1,9 @@
-package net.nonylene.mackerelagent.host.metric
+package net.nonylene.mackerelagent.host.common
 
 import android.annotation.TargetApi
 import android.os.Build
+import net.nonylene.mackerelagent.host.metric.MetricVariable
+import net.nonylene.mackerelagent.host.metric.MetricsContainer
 import java.util.*
 
 // df command returns immediately (within 10 msec)
