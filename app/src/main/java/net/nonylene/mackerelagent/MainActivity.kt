@@ -9,10 +9,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function
 import io.reactivex.functions.Function3
-import io.reactivex.functions.Function4
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import net.nonylene.mackerelagent.host.common.getFileSystemStats
 import net.nonylene.mackerelagent.host.metric.*
 import net.nonylene.mackerelagent.host.spec.getBlockDevicesSpecs
 import net.nonylene.mackerelagent.host.spec.getFileSystemsSpec
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         val memInfo = getMemoryInfo()
         val loadavg = getLoadAverage5min()
-        val fileSystemMCs = getFileSystemStateMCs()
+        val fileSystemMCs = getFileSystemStates()
         println(getKernelSpec())
         println(getBlockDevicesSpecs())
         println(getFileSystemsSpec())
