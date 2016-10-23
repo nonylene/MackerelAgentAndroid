@@ -1,26 +1,14 @@
 package net.nonylene.mackerelagent.host.metric
 
-import java.io.File
+import net.nonylene.mackerelagent.host.spec.getMemoryInfo
 import java.util.*
 
-fun getMemoryInfo(): MemoryInfo {
-    val regex = Regex("(.*):\\s*(\\d+)\\s+kB")
-    val map = HashMap<String, Long>()
-    File("/proc/meminfo").forEachLine {
-        regex.find(it)?.let { result ->
-            val values = result.groupValues
-            map.put(values[1], values[2].toLong())
-        }
-    }
+fun getMemoryMetrics(): MemoryMetrics {
+    val info = getMemoryInfo()
 
-    val free = map["MemFree"]!! * 1024
-    val total = map["MemTotal"]!! * 1024
-    val cached = map["Cached"]!! * 1024
-    val buffers = map["Buffers"]!! * 1024
-    val used = total - free - cached - buffers
-    return MemoryInfo(free, buffers, cached, used, total,
-            map["SwapFree"]!! * 1024, map["SwapCached"]!! * 1024, map["Active"]!! * 1024,
-            map["Inactive"]!! * 1024, map["MemAvailable"]?.let { it * 1024 },
+    val used = info.total!! - info.free!! - info.cached!! - info.buffers!!
+    return MemoryMetrics(info.free, info.buffers, info.cached, used, info.total,
+            info.swapFree!!, info.swapCached!!, info.active!!, info.inactive!!, info.available,
             Date()
     )
 }
@@ -37,7 +25,7 @@ fun getMemoryInfo(): MemoryInfo {
 // "SwapFree":     "swap_free",
 
 @Suppress("unused")
-class MemoryInfo(
+class MemoryMetrics(
         @MetricVariable("free")
         val free: Long,
         @MetricVariable("buffers")
