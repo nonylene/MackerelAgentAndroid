@@ -5,36 +5,36 @@ import java.util.*
 
 fun getMemoryInfo(): MemoryInfo {
     val regex = Regex("(.*):\\s*(\\d+)\\s+kB")
-    val hash = HashMap<String, Long>()
+    val map = HashMap<String, Long>()
     File("/proc/meminfo").forEachLine {
         regex.find(it)?.let { result ->
             val values = result.groupValues
-            hash.put(values[1], values[2].toLong())
+            map.put(values[1], values[2].toLong())
         }
     }
 
-    val free = hash["MemFree"]!! * 1024
-    val total = hash["MemTotal"]!! * 1024
-    val cached = hash["Cached"]!! * 1024
-    val buffers = hash["Buffers"]!! * 1024
+    val free = map["MemFree"]!! * 1024
+    val total = map["MemTotal"]!! * 1024
+    val cached = map["Cached"]!! * 1024
+    val buffers = map["Buffers"]!! * 1024
     val used = total - free - cached - buffers
     return MemoryInfo(free, buffers, cached, used, total,
-            hash["SwapFree"]!! * 1024, hash["SwapCached"]!! * 1024, hash["Active"]!! * 1024,
-            hash["Inactive"]!! * 1024, hash["MemAvailable"]?.let { it * 1024 },
+            map["SwapFree"]!! * 1024, map["SwapCached"]!! * 1024, map["Active"]!! * 1024,
+            map["Inactive"]!! * 1024, map["MemAvailable"]?.let { it * 1024 },
             Date()
     )
 }
 
-//"MemTotal":     "total",
-//"MemFree":      "free",
-//"MemAvailable": "available",
-//"Buffers":      "buffers",
-//"Cached":       "cached",
-//"Active":       "active",
-//"Inactive":     "inactive",
-//"SwapCached":   "swap_cached",
-//"SwapTotal":    "swap_total",
-//"SwapFree":     "swap_free",
+// "MemTotal":     "total",
+// "MemFree":      "free",
+// "MemAvailable": "available",
+// "Buffers":      "buffers",
+// "Cached":       "cached",
+// "Active":       "active",
+// "Inactive":     "inactive",
+// "SwapCached":   "swap_cached",
+// "SwapTotal":    "swap_total",
+// "SwapFree":     "swap_free",
 
 @Suppress("unused")
 class MemoryInfo(
