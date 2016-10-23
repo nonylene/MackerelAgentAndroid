@@ -13,6 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.*
 import net.nonylene.mackerelagent.host.spec.getBlockDevicesSpecs
+import net.nonylene.mackerelagent.host.spec.getCPUSpec
 import net.nonylene.mackerelagent.host.spec.getFileSystemsSpec
 import net.nonylene.mackerelagent.host.spec.getKernelSpec
 import net.nonylene.mackerelagent.network.createMetrics
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         println(getKernelSpec())
         println(getBlockDevicesSpecs())
         println(getFileSystemsSpec())
+        println(getCPUSpec())
         disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
                 getCPUPercentageObservable(),
                 Function3 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
