@@ -22,7 +22,7 @@ import java.io.File
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/spec/linux/cpu.go
 
-fun getCPUSpec(): List<CPUSpec> {
+fun getCPUSpec(): List<CPUCoreSpec> {
     // ignore duplicate (core)
     return File("/proc/cpuinfo").readLines().filter {
         it.contains(':')
@@ -33,7 +33,7 @@ fun getCPUSpec(): List<CPUSpec> {
         // remove first element
     }.drop(1).map {
         val map = it.map { it[0] to it[1] }.toMap()
-        CPUSpec(
+        CPUCoreSpec(
                 map["vendor_id"],
                 map["model"],
                 map["stepping"],
@@ -48,10 +48,7 @@ fun getCPUSpec(): List<CPUSpec> {
     }
 }
 
-/**
- * cpu core spec
- */
-data class CPUSpec(
+data class CPUCoreSpec(
         val vendorId: String?,
         val model: String?,
         val stepping: String?,

@@ -4,7 +4,7 @@ import java.io.File
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/spec/linux/block_device.go
 
-fun getBlockDevicesSpecs(): Map<String, BlockDeviceSpec> {
+fun getBlockDevicesSpec(): Map<String, BlockDeviceSpec> {
     val baseBlockDir = File("/sys/block")
     val blocks = baseBlockDir.list()
     return blocks.map {

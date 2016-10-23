@@ -32,17 +32,17 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val memoryMetrics = getMemoryMetrics()
-        val loadavg = getLoadAverage5min()
-        val fileSystemMCs = getFileSystemStates()
+        val loadavg = getLoadAverageMetrics()
+        val fileSystemMCs = getFileSystemMetricsList()
         println(getKernelSpec())
-        println(getBlockDevicesSpecs())
+        println(getBlockDevicesSpec())
         println(getFileSystemsSpec())
-        println(getMemoryInfo())
+        println(getMemorySpec())
         println(getCPUSpec())
-        disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
-                getCPUPercentageObservable(),
-                Function3 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
-                            cpuPercentage: CPUPercentage ->
+        disposable = Observable.combineLatest(getInterfaceMetricsListObservable(),
+                getDiskMetricsListObservable(), getCPUMetricsObservable(),
+                Function3 { interfaceDeltas: List<InterfaceDeltaMetrics>, diskDeltas: List<DiskDeltaMetrics>,
+                            cpuPercentage: CPUPercentageMetrics ->
                     interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memoryMetrics + loadavg
                 })
                 .retryWhen { observable ->

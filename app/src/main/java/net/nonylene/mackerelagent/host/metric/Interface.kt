@@ -11,7 +11,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
+fun getInterfaceMetricsListObservable(): Observable<List<InterfaceDeltaMetrics>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentInterfaceStats() }
             // save result cache to realm
@@ -26,11 +26,11 @@ fun getInterfaceDeltaObservable(): Observable<List<InterfaceDelta>> {
             }
             // initial value will be evaluated immediately
             // use lambda to get latest realm result after retry
-            .scanWith({ null to getInitialInterfaceStats() }, { beforePair: Pair<List<InterfaceDelta>?, List<InterfaceStat>>, after ->
+            .scanWith({ null to getInitialInterfaceStats() }, { beforePair: Pair<List<InterfaceDeltaMetrics>?, List<InterfaceStat>>, after ->
                 val beforeList = beforePair.second
                 after.mapNotNull { afterStat ->
                     beforeList.find { it.name == afterStat.name }?.let { beforeStat ->
-                        createInterfaceDelta(beforeStat, afterStat)
+                        createInterfaceMetrics(beforeStat, afterStat)
                     }
                 } to after
             }).skip(1)
@@ -76,14 +76,14 @@ private fun getInitialInterfaceStats(): List<InterfaceStat> {
     }
 }
 
-private fun createInterfaceDelta(before: InterfaceStat, after: InterfaceStat): InterfaceDelta {
+private fun createInterfaceMetrics(before: InterfaceStat, after: InterfaceStat): InterfaceDeltaMetrics {
     if (before.name != after.name) {
         throw IllegalArgumentException("before stat name (${before.name}) and after stat name (${after.name}) are not the same")
     }
     val receiveDiff = after.receiveBytes - before.receiveBytes
     val transmitDiff = after.transmitBytes - before.transmitBytes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
-    return InterfaceDelta(receiveDiff / secDiff, transmitDiff / secDiff, after.name, after.timeStamp)
+    return InterfaceDeltaMetrics(receiveDiff / secDiff, transmitDiff / secDiff, after.name, after.timeStamp)
 }
 
 data class InterfaceStat(
@@ -109,7 +109,7 @@ data class InterfaceStat(
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/interface.go
 @Suppress("unused")
-class InterfaceDelta(
+class InterfaceDeltaMetrics(
         @MetricVariable("rxBytes.delta")
         val receiveBytes: Double,
         @MetricVariable("txBytes.delta")

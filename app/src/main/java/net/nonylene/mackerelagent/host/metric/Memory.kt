@@ -1,10 +1,10 @@
 package net.nonylene.mackerelagent.host.metric
 
-import net.nonylene.mackerelagent.host.spec.getMemoryInfo
+import net.nonylene.mackerelagent.host.spec.getMemorySpec
 import java.util.*
 
 fun getMemoryMetrics(): MemoryMetrics {
-    val info = getMemoryInfo()
+    val info = getMemorySpec()
 
     val used = info.total!! - info.free!! - info.cached!! - info.buffers!!
     return MemoryMetrics(info.free, info.buffers, info.cached, used, info.total,

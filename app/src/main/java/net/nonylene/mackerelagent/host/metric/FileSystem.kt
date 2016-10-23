@@ -1,14 +1,14 @@
 package net.nonylene.mackerelagent.host.metric
 
-import net.nonylene.mackerelagent.host.common.getCommonFileSystemStats
+import net.nonylene.mackerelagent.host.common.getFileSystemStats
 import java.util.*
 
-fun getFileSystemStates(): List<FileSystemState> {
+fun getFileSystemMetricsList(): List<FileSystemMetrics> {
         val date = Date()
-        return getCommonFileSystemStats().filter {
+        return getFileSystemStats().filter {
             it.name.contains("/dev/")
         }.map {
-               FileSystemState(
+               FileSystemMetrics(
                        it.kbSize * 1024,
                        it.kbUsed * 1024,
                        it.name.removePrefix("/dev/"),
@@ -18,7 +18,7 @@ fun getFileSystemStates(): List<FileSystemState> {
 }
 
 @Suppress("unused")
-class FileSystemState(
+class FileSystemMetrics(
         @MetricVariable("size")
         val size: Long,
         @MetricVariable("used")

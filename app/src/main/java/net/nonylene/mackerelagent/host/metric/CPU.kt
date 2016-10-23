@@ -10,7 +10,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getCPUPercentageObservable(): Observable<CPUPercentage> {
+fun getCPUMetricsObservable(): Observable<CPUPercentageMetrics> {
     // map / doOnNext will be executed 2 SECONDS after initialize
     return Observable.interval(2, TimeUnit.SECONDS).map { getCurrentCPUStat() }
             // save result cache to realm
@@ -23,8 +23,8 @@ fun getCPUPercentageObservable(): Observable<CPUPercentage> {
                 }
             }
             // initial value will be evaluated immediately
-            .scan(null to getInitialCPUStat(), { beforePair: Pair<CPUPercentage?, CPUStat>, after ->
-                createCPUPercentage(beforePair.second, after) to after
+            .scan(null to getInitialCPUStat(), { beforePair: Pair<CPUPercentageMetrics?, CPUStat>, after ->
+                createCPUPercentageMetrics(beforePair.second, after) to after
             }).skip(1)
             // skip first -> nonnull
             .map { it.first!! }
@@ -57,7 +57,7 @@ private fun getInitialCPUStat(): CPUStat {
     }
 }
 
-private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage {
+private fun createCPUPercentageMetrics(before: CPUStat, after: CPUStat): CPUPercentageMetrics {
     // merge all diffs
     val userDiff = after.user - before.user
     val niceDiff = after.nice - before.nice
@@ -71,7 +71,7 @@ private fun createCPUPercentage(before: CPUStat, after: CPUStat): CPUPercentage 
     val guestNiceDiff = after.guestNice - before.guestNice
 
     val allDiff = userDiff + niceDiff + systemDiff + idleDiff + iowaitDiff + irqDiff + softirqDiff + stealDiff + guestDiff + guestNiceDiff
-    return CPUPercentage(
+    return CPUPercentageMetrics(
             userDiff / allDiff * 100,
             niceDiff / allDiff * 100,
             systemDiff / allDiff * 100,
@@ -101,7 +101,7 @@ data class CPUStat(
 
 // metrics: https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/cpuusage.go
 @Suppress("unused")
-class CPUPercentage(
+class CPUPercentageMetrics(
         @MetricVariable("user.percentage")
         val user: Double,
         @MetricVariable("nice.percentage")

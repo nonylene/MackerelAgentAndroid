@@ -4,7 +4,7 @@ import android.annotation.TargetApi
 import android.os.Build
 
 // df command returns immediately (within 10 msec)
-fun getCommonFileSystemStats(): List<CommonFileSystemStat> {
+fun getFileSystemStats(): List<FileSystemStat> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         getToyboxDfStats()
     } else {
@@ -25,7 +25,7 @@ fun getCommonFileSystemStats(): List<CommonFileSystemStat> {
 //
 // todo: send file mount path option /
 @TargetApi(Build.VERSION_CODES.N)
-private fun getToyboxDfStats(): List<CommonFileSystemStat> {
+private fun getToyboxDfStats(): List<FileSystemStat> {
     val exec = Runtime.getRuntime().exec(arrayOf("df", "-P", "-k"))
     exec.waitFor()
     return exec.inputStream.reader().readLines()
@@ -36,7 +36,7 @@ private fun getToyboxDfStats(): List<CommonFileSystemStat> {
             .map {
                 val used = it[2].toLong()
                 val available = it[3].toLong()
-                CommonFileSystemStat(
+                FileSystemStat(
                         it[0],
                         available + used,
                         used,
@@ -53,7 +53,7 @@ private fun getToyboxDfStats(): List<CommonFileSystemStat> {
 // /dev                   889.4M   104.0K   889.3M   4096
 // /sys/fs/cgroup         889.4M     0.0K   889.4M   4096
 // /sys/fs/cgroup/memory: Permission denied
-private fun getToolboxDfStats(): List<CommonFileSystemStat> {
+private fun getToolboxDfStats(): List<FileSystemStat> {
     val exec = Runtime.getRuntime().exec("df")
     exec.waitFor()
     return exec.inputStream.reader().readLines()
@@ -66,7 +66,7 @@ private fun getToolboxDfStats(): List<CommonFileSystemStat> {
                 val name = it[0]
                 val size = restoreKBytes(it[1])
                 val used = restoreKBytes(it[2])
-                CommonFileSystemStat(
+                FileSystemStat(
                         name,
                         size,
                         used,
@@ -88,7 +88,7 @@ private fun restoreKBytes(value: String): Long {
 }
 
 // all units of sizes are kByte
-data class CommonFileSystemStat(
+data class FileSystemStat(
         val name: String,
         val kbSize: Long,
         val kbUsed: Long,

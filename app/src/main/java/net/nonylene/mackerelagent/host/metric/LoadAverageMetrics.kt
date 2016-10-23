@@ -3,12 +3,12 @@ package net.nonylene.mackerelagent.host.metric
 import java.io.File
 import java.util.*
 
-fun getLoadAverage5min(): LoadAverage {
-    return LoadAverage(File("/proc/loadavg").readText().split(" ")[1], Date())
+fun getLoadAverageMetrics(): LoadAverageMetrics {
+    return LoadAverageMetrics(File("/proc/loadavg").readText().split(" ")[1], Date())
 }
 
 @Suppress("unused")
-class LoadAverage(
+class LoadAverageMetrics(
         @MetricVariable("loadavg5")
         val loadavg5: String,
         timeStamp: Date

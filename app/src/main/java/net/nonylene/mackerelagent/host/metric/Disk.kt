@@ -11,7 +11,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
+fun getDiskMetricsListObservable(): Observable<List<DiskDeltaMetrics>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentDiskStats() }
             // save result cache to realm
@@ -26,11 +26,11 @@ fun getDiskDeltaObservable(): Observable<List<DiskDelta>> {
             }
             // initial value will be evaluated immediately
             // use lambda to get latest realm result after retry
-            .scanWith({ null to getInitialDiskStats() }, { beforePair: Pair<List<DiskDelta>?, List<DiskStat>>, after ->
+            .scanWith({ null to getInitialDiskStats() }, { beforePair: Pair<List<DiskDeltaMetrics>?, List<DiskStat>>, after ->
                 val beforeList = beforePair.second
                 after.mapNotNull { afterStat ->
                     beforeList.find { it.name == afterStat.name }?.let { beforeStat ->
-                        createDiskDelta(beforeStat, afterStat)
+                        createDiskDeltaMetrics(beforeStat, afterStat)
                     }
                 } to after
             }).skip(1)
@@ -74,14 +74,14 @@ private fun getInitialDiskStats(): List<DiskStat> {
     }
 }
 
-private fun createDiskDelta(before: DiskStat, after: DiskStat): DiskDelta {
+private fun createDiskDeltaMetrics(before: DiskStat, after: DiskStat): DiskDeltaMetrics {
     if (before.name != after.name) {
         throw IllegalArgumentException("before stat name (${before.name}) and after stat name (${after.name}) are not the same")
     }
     val readsDiff = after.reads - before.reads
     val writesDiff = after.writes - before.writes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
-    return DiskDelta(readsDiff / secDiff, writesDiff / secDiff, after.name, after.timeStamp)
+    return DiskDeltaMetrics(readsDiff / secDiff, writesDiff / secDiff, after.name, after.timeStamp)
 }
 
 data class DiskStat(
@@ -102,7 +102,7 @@ data class DiskStat(
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/metrics/linux/disk.go
 @Suppress("unused")
-class DiskDelta(
+class DiskDeltaMetrics(
         @MetricVariable("reads.delta")
         val reads: Double,
         @MetricVariable("writes.delta")

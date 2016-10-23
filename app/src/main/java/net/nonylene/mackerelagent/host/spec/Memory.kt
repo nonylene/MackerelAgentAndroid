@@ -47,7 +47,7 @@ import java.util.*
 // DirectMap4k:       14272 kB
 // DirectMap2M:     2082816 kB
 
-fun getMemoryInfo(): MemoryInfo {
+fun getMemorySpec(): MemorySpec {
     val regex = Regex("(.*):\\s*(\\d+)\\s+kB")
     val map = HashMap<String, Long>()
     File("/proc/meminfo").forEachLine {
@@ -58,7 +58,7 @@ fun getMemoryInfo(): MemoryInfo {
         }
     }
 
-    return MemoryInfo(
+    return MemorySpec(
             map["MemTotal"], map["MemFree"], map["Buffers"], map["Cached"], map["Active"], map["Inactive"],
             map["HighTotal"], map["HighFree"], map["LowTotal"], map["LowFree"], map["Dirty"],
             map["Writeback"], map["AnonPages"], map["Mapped"], map["Slab"], map["SReclaimable"], map["SUnreclaim"],
@@ -69,7 +69,7 @@ fun getMemoryInfo(): MemoryInfo {
 }
 
 
-data class MemoryInfo(
+data class MemorySpec(
         val total: Long?,
         val free: Long?,
         val buffers: Long?,

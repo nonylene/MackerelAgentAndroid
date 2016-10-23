@@ -1,10 +1,10 @@
 package net.nonylene.mackerelagent.host.spec
 
-import net.nonylene.mackerelagent.host.common.getCommonFileSystemStats
+import net.nonylene.mackerelagent.host.common.getFileSystemStats
 
 // XXX: IGNORE DUPLICATE OF NAME (e.g. "tmpfs")
 fun getFileSystemsSpec(): Map<String, FileSystemSpec> {
-    return getCommonFileSystemStats().map {
+    return getFileSystemStats().map {
         it.name to FileSystemSpec(it.kbSize, it.kbUsed, it.kbAvailable, it.percentUsed, it.mount)
     }.toMap()
 }
