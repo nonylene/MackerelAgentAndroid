@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.*
 import net.nonylene.mackerelagent.host.spec.*
-import net.nonylene.mackerelagent.network.createMetrics
+import net.nonylene.mackerelagent.network.model.createMetrics
 
 class MainActivity : AppCompatActivity() {
 

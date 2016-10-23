@@ -1,4 +1,4 @@
-package net.nonylene.mackerelagent.network
+package net.nonylene.mackerelagent.network.model
 
 import net.nonylene.mackerelagent.host.metric.MetricVariable
 import net.nonylene.mackerelagent.host.metric.MetricsContainer
