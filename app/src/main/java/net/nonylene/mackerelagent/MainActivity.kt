@@ -12,10 +12,7 @@ import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.*
-import net.nonylene.mackerelagent.host.spec.getBlockDevicesSpecs
-import net.nonylene.mackerelagent.host.spec.getCPUSpec
-import net.nonylene.mackerelagent.host.spec.getFileSystemsSpec
-import net.nonylene.mackerelagent.host.spec.getKernelSpec
+import net.nonylene.mackerelagent.host.spec.*
 import net.nonylene.mackerelagent.network.createMetrics
 
 class MainActivity : AppCompatActivity() {
@@ -34,18 +31,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val memInfo = getMemoryInfo()
+        val memoryMetrics = getMemoryMetrics()
         val loadavg = getLoadAverage5min()
         val fileSystemMCs = getFileSystemStates()
         println(getKernelSpec())
         println(getBlockDevicesSpecs())
         println(getFileSystemsSpec())
+        println(getMemoryInfo())
         println(getCPUSpec())
         disposable = Observable.combineLatest(getInterfaceDeltaObservable(), getDiskDeltaObservable(),
                 getCPUPercentageObservable(),
                 Function3 { interfaceDeltas: List<InterfaceDelta>, diskDeltas: List<DiskDelta>,
                             cpuPercentage: CPUPercentage ->
-                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memInfo + loadavg
+                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memoryMetrics + loadavg
                 })
                 .retryWhen { observable ->
                     // retry once
