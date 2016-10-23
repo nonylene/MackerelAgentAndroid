@@ -1,13 +1,13 @@
 package net.nonylene.mackerelagent.network
 
-import net.nonylene.mackerelagent.host.metric.MetricsContainer
 import net.nonylene.mackerelagent.host.metric.MetricVariable
+import net.nonylene.mackerelagent.host.metric.MetricsContainer
 import kotlin.reflect.memberProperties
 
 /**
  * @param time: epoch time (seconds)
  */
-data class Metric(val name: String, val time: Long, val value: String)
+data class Metric(val name: String, val time: Long, val value: Any)
 
 fun createMetrics(metricsContainers: List<MetricsContainer>): List<Metric> {
     val metrics = metricsContainers.map(::createMetricsFromMetricContainer).reduce { acc, items ->
@@ -40,7 +40,7 @@ private fun createMetricsFromMetricContainer(metricsContainer: MetricsContainer)
             Metric(
                     keyPrefix + annotations[0].key,
                     metricsContainer.timeStamp.time / 1000,
-                    value.toString()
+                    value
             )
         }
     }
