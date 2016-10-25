@@ -1,6 +1,6 @@
 package net.nonylene.mackerelagent.host.spec
 
-import net.nonylene.mackerelagent.splitBy
+import net.nonylene.mackerelagent.utils.splitBy
 import java.io.File
 
 //case "processor":

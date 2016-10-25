@@ -1,4 +1,4 @@
-package net.nonylene.mackerelagent
+package net.nonylene.mackerelagent.utils
 
 import java.util.*
 

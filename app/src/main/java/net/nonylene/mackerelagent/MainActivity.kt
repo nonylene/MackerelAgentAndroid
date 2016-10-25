@@ -17,6 +17,7 @@ import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.*
 import net.nonylene.mackerelagent.host.spec.*
 import net.nonylene.mackerelagent.network.model.createMetrics
+import net.nonylene.mackerelagent.utils.createAlarm
 
 class MainActivity : AppCompatActivity() {
 
