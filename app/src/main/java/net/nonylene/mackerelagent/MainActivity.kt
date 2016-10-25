@@ -1,7 +1,10 @@
 package net.nonylene.mackerelagent
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -67,6 +70,18 @@ class MainActivity : AppCompatActivity() {
                 .subscribe {
                     textView.text = createMetrics(it).toString()
                 }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.menu_activity_main_preference -> startActivity(Intent(this, MackerelPreferenceActivity::class.java))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStop() {
