@@ -71,6 +71,9 @@ class MainActivity : AppCompatActivity() {
                 .subscribe {
                     textView.text = createMetrics(it).toString()
                 }
+//        MackerelApi.getService(this).test().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
+//            println(it.string())
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
