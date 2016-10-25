@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:title="@string/preference_api_key_title"
+        android:summary="@string/preference_api_key_summary"
+        android:key="@string/preference_api_key_key"
+        />
+
+</PreferenceScreen>

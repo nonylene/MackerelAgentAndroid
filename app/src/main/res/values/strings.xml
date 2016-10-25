@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MackerelAgent</string>
+    <string name="preference_api_key_key">api_key</string>
+    <string name="preference_api_key_summary">Set mackerel API Key</string>
+    <string name="preference_api_key_title">API Key</string>
+    <string name="menu_activity_main_preference">Settings</string>
 </resources>

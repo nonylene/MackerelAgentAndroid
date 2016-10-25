@@ -33,6 +33,9 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".MackerelPreferenceActivity"
+            />
+
         <service
             android:name=".service.GatherMetricsService"
             android:process=":remote"
