@@ -2,6 +2,9 @@ package net.nonylene.mackerelagent.network
 
 import android.content.Context
 import android.preference.PreferenceManager
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
+import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import net.nonylene.mackerelagent.utils.getApiKey
 import okhttp3.OkHttpClient
@@ -39,7 +42,12 @@ object MackerelApi {
                     .client(client)
                     .baseUrl("https://mackerel.io/")
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(
+                            GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {
+                                override fun shouldSkipClass(clazz: Class<*>?) = false
+                                override fun shouldSkipField(f: FieldAttributes?) = f?.getAnnotation(Exclude::class.java) != null
+                            }).create()
+                    ))
                     .build()
 
             service = retrofit.create(MackerelService::class.java)
