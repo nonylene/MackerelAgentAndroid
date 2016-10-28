@@ -4,12 +4,12 @@ import java.io.File
 import java.util.*
 
 fun getLoadAverageMetrics(): LoadAverageMetrics {
-    return LoadAverageMetrics(File("/proc/loadavg").readText().split(" ")[1], Date())
+    return LoadAverageMetrics(File("/proc/loadavg").readText().split(" ")[1].toDouble(), Date())
 }
 
 @Suppress("unused")
 class LoadAverageMetrics(
         @MetricVariable("loadavg5")
-        val loadavg5: String,
+        val loadavg5: Double,
         timeStamp: Date
 ): MetricsContainer.Default(null, null, timeStamp)
