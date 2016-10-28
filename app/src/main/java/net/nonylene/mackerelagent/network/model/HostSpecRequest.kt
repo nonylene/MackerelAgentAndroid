@@ -3,15 +3,15 @@ package net.nonylene.mackerelagent.network.model
 import com.google.gson.annotations.SerializedName
 import net.nonylene.mackerelagent.host.spec.*
 
-class HostSpecRequest(
+data class HostSpecRequest(
         @SerializedName("name") val name: String,
         @SerializedName("meta") val meta: Meta) {
 
-    class Meta(
+    data class Meta(
             @SerializedName("agent-version")
             val versionName: String,
             @SerializedName("block_device")
-            val blockDevice: BlockDeviceSpec,
+            val blockDevice: Map<String, BlockDeviceSpec>,
             @SerializedName("cpu")
             val cpu: List<CPUCoreSpec>,
             @SerializedName("filesystem")
@@ -23,4 +23,4 @@ class HostSpecRequest(
     )
 }
 
-class HostSpecResponse(@SerializedName("id") val hostId: String)
+data class HostSpecResponse(@SerializedName("id") val hostId: String)
