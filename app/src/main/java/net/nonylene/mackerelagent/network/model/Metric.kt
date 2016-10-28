@@ -20,7 +20,7 @@ data class Metric(
         @SerializedName("time")
         val time: Long,
         @SerializedName("value")
-        val value: Any
+        val value: Number
 )
 
 fun createMetrics(metricsContainers: List<MetricsContainer>, context: Context): List<Metric> {
@@ -58,7 +58,8 @@ private fun createMetricsFromMetricContainer(metricsContainer: MetricsContainer,
                     PreferenceManager.getDefaultSharedPreferences(context).getHostId(context),
                     keyPrefix + annotations[0].key,
                     metricsContainer.timeStamp.time / 1000,
-                    value
+                    // metric value must be number
+                    value as Number
             )
         }
     }
