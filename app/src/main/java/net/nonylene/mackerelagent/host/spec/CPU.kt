@@ -1,5 +1,6 @@
 package net.nonylene.mackerelagent.host.spec
 
+import com.google.gson.annotations.SerializedName
 import net.nonylene.mackerelagent.utils.splitBy
 import java.io.File
 
@@ -49,14 +50,24 @@ fun getCPUSpec(): List<CPUCoreSpec> {
 }
 
 data class CPUCoreSpec(
+        @SerializedName("vendor_id")
         val vendorId: String?,
+        @SerializedName("model")
         val model: String?,
+        @SerializedName("stepping")
         val stepping: String?,
+        @SerializedName("physical_id")
         val physicalId: String?,
+        @SerializedName("core_id")
         val coreId: String?,
+        @SerializedName("model_name")
         val modelName: String?,
+        @SerializedName("cache_size")
         val cacheSize: String?,
+        @SerializedName("family")
         val cpuFamily: String?,
+        @SerializedName("cores")
         val cpuCores: String?,
+        @SerializedName("")
         val cpuMHz: String?
 )

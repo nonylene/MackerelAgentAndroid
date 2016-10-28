@@ -1,5 +1,7 @@
 package net.nonylene.mackerelagent.host.spec
 
+import com.google.gson.annotations.SerializedName
+import net.nonylene.mackerelagent.network.Exclude
 import java.io.File
 import java.util.*
 
@@ -70,34 +72,62 @@ fun getMemorySpec(): MemorySpec {
 
 
 data class MemorySpec(
+        @SerializedName("total")
         val total: Long?,
+        @SerializedName("free")
         val free: Long?,
+        @SerializedName("buffers")
         val buffers: Long?,
+        @SerializedName("cached")
         val cached: Long?,
+        @SerializedName("active")
         val active: Long?,
+        @SerializedName("inactive")
         val inactive: Long?,
+        @SerializedName("high_total")
         val highTotal: Long?,
+        @SerializedName("high_free")
         val highFree: Long?,
+        @SerializedName("low_total")
         val lowTotal: Long?,
+        @SerializedName("low_free")
         val lowFree: Long?,
+        @SerializedName("dirty")
         val dirty: Long?,
+        @SerializedName("writeback")
         val writeback: Long?,
+        @SerializedName("anon_pages")
         val anonPages: Long?,
+        @SerializedName("mapped")
         val mapped: Long?,
+        @SerializedName("slab")
         val slab: Long?,
+        @SerializedName("slab_reclaimable")
         val slabReclaimable: Long?,
+        @SerializedName("slab_unreclaim")
         val slabUnreclaim: Long?,
+        @SerializedName("page_tables")
         val pageTables: Long?,
+        @SerializedName("nfs_unstable")
         val nfsUnstable: Long?,
+        @SerializedName("bounce")
         val bounce: Long?,
+        @SerializedName("commit_limit")
         val commitLimit: Long?,
+        @SerializedName("committed_as")
         val committedAs: Long?,
+        @SerializedName("vmalloc_total")
         val vmallocTotal: Long?,
+        @SerializedName("vmalloc_used")
         val vmallocTsed: Long?,
+        @SerializedName("vmalloc_chunk")
         val vmallocChunk: Long?,
+        @SerializedName("swap_cached")
         val swapCached: Long?,
+        @SerializedName("swap_total")
         val swapTotal: Long?,
+        @SerializedName("swap_free")
         val swapFree: Long?,
+        @Exclude
         val available: Long?
 )
-

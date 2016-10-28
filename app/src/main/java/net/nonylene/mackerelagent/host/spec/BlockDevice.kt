@@ -1,5 +1,6 @@
 package net.nonylene.mackerelagent.host.spec
 
+import com.google.gson.annotations.SerializedName
 import java.io.File
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/spec/linux/block_device.go
@@ -32,11 +33,18 @@ private fun getBlockContentOrNull(blockDir: File, fileName: String): String? {
 }
 
 data class BlockDeviceSpec(
+        @SerializedName("size")
         val size: String?,
+        @SerializedName("removable")
         val removable: String?,
+        @SerializedName("model")
         val model: String?,
+        @SerializedName("rev")
         val rev: String?,
+        @SerializedName("state")
         val state: String?,
+        @SerializedName("timeout")
         val timeout: String?,
+        @SerializedName("vendor")
         val vendor: String?
 )

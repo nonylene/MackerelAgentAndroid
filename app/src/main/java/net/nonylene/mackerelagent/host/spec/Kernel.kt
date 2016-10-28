@@ -1,5 +1,6 @@
 package net.nonylene.mackerelagent.host.spec
 
+import com.google.gson.annotations.SerializedName
 import java.io.File
 
 // https://github.com/mackerelio/mackerel-agent/blob/master/spec/linux/kernel.go
@@ -23,8 +24,12 @@ fun getKernelSpec(): KernelSpec {
 }
 
 data class KernelSpec(
+        @SerializedName("name")
         val name: String,
+        @SerializedName("release")
         val release: String,
+        @SerializedName("version")
         val version: String,
+        @SerializedName("machine")
         val machine: String
 )
