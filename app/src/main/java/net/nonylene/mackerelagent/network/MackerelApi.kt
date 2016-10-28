@@ -6,6 +6,7 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import net.nonylene.mackerelagent.BuildConfig
 import net.nonylene.mackerelagent.utils.getApiKey
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,7 +25,7 @@ object MackerelApi {
                 PreferenceManager.getDefaultSharedPreferences(appContext).getApiKey(appContext)
             }
 
-            val client = OkHttpClient.Builder()
+            val builder = OkHttpClient.Builder()
                     .addInterceptor { chain ->
                         val request = if (chain.request().url().host() == "mackerel.io") {
                             apiKeyGetter()?.let {
@@ -37,13 +38,15 @@ object MackerelApi {
                         }
                         chain.proceed(request)
                     }
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
+
+            if (BuildConfig.LOG_OKHTTP) {
+                builder.addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+            }
 
             val retrofit = Retrofit.Builder()
-                    .client(client)
+                    .client(builder.build())
                     .baseUrl("https://mackerel.io/")
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(
