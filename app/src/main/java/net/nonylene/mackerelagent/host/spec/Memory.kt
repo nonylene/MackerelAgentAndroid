@@ -50,13 +50,13 @@ import java.util.*
 // DirectMap2M:     2082816 kB
 
 fun getMemorySpec(): MemorySpec {
-    val regex = Regex("(.*):\\s*(\\d+)\\s+kB")
-    val map = HashMap<String, Long>()
+    val regex = Regex("(.*):\\s*(\\d+)\\s+(.+)")
+    val map = HashMap<String, String>()
     File("/proc/meminfo").forEachLine {
         regex.find(it)?.let { result ->
             val values = result.groupValues
             // kB -> * 1024
-            map.put(values[1], values[2].toLong() * 1024)
+            map.put(values[1], values[2] + values[3])
         }
     }
 
@@ -73,61 +73,61 @@ fun getMemorySpec(): MemorySpec {
 
 data class MemorySpec(
         @SerializedName("total")
-        val total: Long?,
+        val total: String?,
         @SerializedName("free")
-        val free: Long?,
+        val free: String?,
         @SerializedName("buffers")
-        val buffers: Long?,
+        val buffers: String?,
         @SerializedName("cached")
-        val cached: Long?,
+        val cached: String?,
         @SerializedName("active")
-        val active: Long?,
+        val active: String?,
         @SerializedName("inactive")
-        val inactive: Long?,
+        val inactive: String?,
         @SerializedName("high_total")
-        val highTotal: Long?,
+        val highTotal: String?,
         @SerializedName("high_free")
-        val highFree: Long?,
+        val highFree: String?,
         @SerializedName("low_total")
-        val lowTotal: Long?,
+        val lowTotal: String?,
         @SerializedName("low_free")
-        val lowFree: Long?,
+        val lowFree: String?,
         @SerializedName("dirty")
-        val dirty: Long?,
+        val dirty: String?,
         @SerializedName("writeback")
-        val writeback: Long?,
+        val writeback: String?,
         @SerializedName("anon_pages")
-        val anonPages: Long?,
+        val anonPages: String?,
         @SerializedName("mapped")
-        val mapped: Long?,
+        val mapped: String?,
         @SerializedName("slab")
-        val slab: Long?,
+        val slab: String?,
         @SerializedName("slab_reclaimable")
-        val slabReclaimable: Long?,
+        val slabReclaimable: String?,
         @SerializedName("slab_unreclaim")
-        val slabUnreclaim: Long?,
+        val slabUnreclaim: String?,
         @SerializedName("page_tables")
-        val pageTables: Long?,
+        val pageTables: String?,
         @SerializedName("nfs_unstable")
-        val nfsUnstable: Long?,
+        val nfsUnstable: String?,
         @SerializedName("bounce")
-        val bounce: Long?,
+        val bounce: String?,
         @SerializedName("commit_limit")
-        val commitLimit: Long?,
+        val commitLimit: String?,
         @SerializedName("committed_as")
-        val committedAs: Long?,
+        val committedAs: String?,
         @SerializedName("vmalloc_total")
-        val vmallocTotal: Long?,
+        val vmallocTotal: String?,
         @SerializedName("vmalloc_used")
-        val vmallocTsed: Long?,
+        val vmallocTsed: String?,
         @SerializedName("vmalloc_chunk")
-        val vmallocChunk: Long?,
+        val vmallocChunk: String?,
         @SerializedName("swap_cached")
-        val swapCached: Long?,
+        val swapCached: String?,
         @SerializedName("swap_total")
-        val swapTotal: Long?,
+        val swapTotal: String?,
         @SerializedName("swap_free")
-        val swapFree: Long?,
+        val swapFree: String?,
         @Exclude
-        val available: Long?
+        val available: String?
 )
