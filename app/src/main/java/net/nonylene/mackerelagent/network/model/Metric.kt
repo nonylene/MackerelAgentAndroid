@@ -1,16 +1,32 @@
 package net.nonylene.mackerelagent.network.model
 
+import android.content.Context
+import android.preference.PreferenceManager
+import com.google.gson.annotations.SerializedName
 import net.nonylene.mackerelagent.host.metric.MetricVariable
 import net.nonylene.mackerelagent.host.metric.MetricsContainer
+import net.nonylene.mackerelagent.utils.getHostId
 import kotlin.reflect.memberProperties
 
 /**
+ * https://mackerel.io/ja/api-docs/entry/host-metrics
  * @param time: epoch time (seconds)
  */
-data class Metric(val name: String, val time: Long, val value: Any)
+data class Metric(
+        @SerializedName("hostId")
+        val hostId: String?,
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("time")
+        val time: Long,
+        @SerializedName("value")
+        val value: Any
+)
 
-fun createMetrics(metricsContainers: List<MetricsContainer>): List<Metric> {
-    val metrics = metricsContainers.map(::createMetricsFromMetricContainer).reduce { acc, items ->
+fun createMetrics(metricsContainers: List<MetricsContainer>, context: Context): List<Metric> {
+    val metrics = metricsContainers.map {
+        createMetricsFromMetricContainer(it, context)
+    }.reduce { acc, items ->
         items.forEach { item ->
             if (acc.any { it.name == item.name }) throw RuntimeException("key ${item.name} is duplicated")
         }
@@ -19,7 +35,7 @@ fun createMetrics(metricsContainers: List<MetricsContainer>): List<Metric> {
     return metrics
 }
 
-private fun createMetricsFromMetricContainer(metricsContainer: MetricsContainer): List<Metric> {
+private fun createMetricsFromMetricContainer(metricsContainer: MetricsContainer, context: Context): List<Metric> {
     val kClazz = metricsContainer.javaClass.kotlin
 
     val customPrefix = when (metricsContainer) {
@@ -38,6 +54,8 @@ private fun createMetricsFromMetricContainer(metricsContainer: MetricsContainer)
         val (prop, annotations) = it
         prop.get(metricsContainer)?.let { value ->
             Metric(
+                    //todo: fail if host id is null
+                    PreferenceManager.getDefaultSharedPreferences(context).getHostId(context),
                     keyPrefix + annotations[0].key,
                     metricsContainer.timeStamp.time / 1000,
                     value

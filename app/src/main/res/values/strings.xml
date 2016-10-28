@@ -3,5 +3,8 @@
     <string name="preference_api_key_key">api_key</string>
     <string name="preference_api_key_summary">Set mackerel API Key</string>
     <string name="preference_api_key_title">API Key</string>
+    <string name="preference_host_id_key">host_id</string>
+    <string name="preference_host_id_summary">Usually, this value is set automatically.</string>
+    <string name="preference_host_id_title">Host id</string>
     <string name="menu_activity_main_preference">Settings</string>
 </resources>
