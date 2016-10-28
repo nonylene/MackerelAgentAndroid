@@ -1,5 +1,6 @@
 package net.nonylene.mackerelagent.host.spec
 
+import android.os.Build
 import com.google.gson.annotations.SerializedName
 import java.io.File
 
@@ -20,7 +21,7 @@ fun getKernelSpec(): KernelSpec {
     val osRelease = File("/proc/sys/kernel/osrelease").readText().trim()
     val osVersion = File("/proc/sys/kernel/version").readText().trim()
     val machineName = System.getProperty("os.arch")
-    return KernelSpec(osType, osRelease, osVersion, machineName)
+    return KernelSpec(osType, osRelease, osVersion, machineName, "Android", Build.VERSION.RELEASE)
 }
 
 data class KernelSpec(
@@ -31,5 +32,9 @@ data class KernelSpec(
         @SerializedName("version")
         val version: String,
         @SerializedName("machine")
-        val machine: String
+        val machine: String,
+        @SerializedName("platform_name")
+        val platformName: String,
+        @SerializedName("platform_version")
+        val platformVersion: String
 )
