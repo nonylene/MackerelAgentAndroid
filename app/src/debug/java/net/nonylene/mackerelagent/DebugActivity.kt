@@ -17,7 +17,7 @@ import net.nonylene.mackerelagent.host.spec.*
 import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.createMetrics
-import net.nonylene.mackerelagent.utils.createAlarm
+import net.nonylene.mackerelagent.utils.createGatherMetricsService
 import net.nonylene.mackerelagent.utils.getHostId
 import net.nonylene.mackerelagent.utils.putApiKey
 import net.nonylene.mackerelagent.utils.putHostId
@@ -33,7 +33,7 @@ class DebugActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_debug)
-        createAlarm(this)
+        createGatherMetricsService(this)
     }
 
     override fun onStart() {

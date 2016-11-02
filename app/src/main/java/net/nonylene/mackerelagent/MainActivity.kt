@@ -22,14 +22,12 @@ import net.nonylene.mackerelagent.host.spec.*
 import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.createMetrics
-import net.nonylene.mackerelagent.utils.createAlarm
+import net.nonylene.mackerelagent.utils.createGatherMetricsService
 import net.nonylene.mackerelagent.utils.getHostId
 import net.nonylene.mackerelagent.utils.putApiKey
 import net.nonylene.mackerelagent.utils.putHostId
 
 class MainActivity : AppCompatActivity() {
-
-    var disposable: Disposable? = null
 
     val textView by lazy {
         findViewById(R.id.text_view) as TextView
@@ -38,14 +36,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        createAlarm(this)
+        createGatherMetricsService(this)
     }
 
     override fun onStart() {
         super.onStart()
-        val memoryMetrics = getMemoryMetrics()
-        val loadavg = getLoadAverageMetrics()
-        val fileSystemMCs = getFileSystemMetricsList()
         val req = HostSpecRequest(
                 "${Build.MANUFACTURER} ${Build.MODEL}",
                 HostSpecRequest.Meta(
@@ -57,39 +52,6 @@ class MainActivity : AppCompatActivity() {
                         getMemorySpec()
                 )
         )
-        disposable = Observable.combineLatest(getInterfaceMetricsListObservable(),
-                getDiskMetricsListObservable(), getCPUMetricsObservable(),
-                Function3 { interfaceDeltas: List<InterfaceDeltaMetrics>, diskDeltas: List<DiskDeltaMetrics>,
-                            cpuPercentage: CPUPercentageMetrics ->
-                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memoryMetrics + loadavg
-                })
-                .take(1)
-                .retryWhen { observable ->
-                    // retry once
-                    Observable.zip(observable, Observable.range(1, 2), BiFunction { error: Throwable, count: Int ->
-                        error to count
-                    }).flatMap(Function<Pair<Throwable, Int>, Observable<Int>> {
-                        if (it.second > 1) {
-                            Observable.error(it.first)
-                        } else {
-                            Observable.just(it.second)
-                        }
-                    }).doOnNext {
-                        // remove realm cache
-                        Realm.getDefaultInstance().use {
-                            it.executeTransaction(Realm::deleteAll)
-                        }
-                    }
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    textView.text = createMetrics(it, this).toString() + req.toString()
-                    MackerelApi.getService(this).postMetrics(createMetrics(it, this))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(::println)
-                }
 
 //        MackerelApi.getService(this).updateHostSpec(PreferenceManager.getDefaultSharedPreferences(this).getHostId(this)!!, req).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
 //            println(it.hostId)
@@ -114,6 +76,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        disposable?.dispose()
+//        disposable?.dispose()
     }
 }
