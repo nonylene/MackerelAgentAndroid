@@ -48,6 +48,7 @@ fun Realm.createRealmInterfaceStats(interfaceStats: List<InterfaceStat>): RealmI
         interfaceStats.map { createRealmInterfaceStat(it) }.forEach {
             stats.add(it)
         }
+        timeStamp = Date()
     }
 }
 

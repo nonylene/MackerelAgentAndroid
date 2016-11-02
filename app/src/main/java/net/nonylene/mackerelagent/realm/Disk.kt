@@ -41,6 +41,7 @@ fun Realm.createRealmDiskStats(diskStats: List<DiskStat>): RealmDiskStats {
         diskStats.map { createRealmDiskStat(it) }.forEach {
             stats.add(it)
         }
+        timeStamp = Date()
     }
 }
 

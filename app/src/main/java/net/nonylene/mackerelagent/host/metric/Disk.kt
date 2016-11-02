@@ -57,19 +57,20 @@ private fun getCurrentDiskStats(): List<DiskStat> {
 }
 
 /**
- * get (most recent [DiskStat] 1.5 minutes before or later) OR (current [DiskStat])
+ * get (most recent [DiskStat] 5 minutes before or later) OR (current [DiskStat])
  */
 private fun getInitialDiskStats(): List<DiskStat> {
-    val oneAndHalfMinutesBefore = Calendar.getInstance().apply {
-        add(Calendar.SECOND, -90)
+    val fiveMinutesBefore = Calendar.getInstance().apply {
+        add(Calendar.MINUTE, -5)
     }
 
-    // recent stat 1.5 minutes before or later
+    // recent stat 5 minutes before or later
     Realm.getDefaultInstance().use {
         val recentStats = it.where(RealmDiskStats::class.java)
-                        .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
+                        .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                         .findAllSorted("timeStamp", Sort.DESCENDING)
                         .firstOrNull()
+        println("stat:" + recentStats)
         return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
     }
 }

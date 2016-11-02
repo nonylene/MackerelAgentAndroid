@@ -59,19 +59,20 @@ private fun getCurrentInterfaceStats(): List<InterfaceStat> {
 }
 
 /**
- * get (most recent [InterfaceStat] 10 minutes before or later) OR (current [InterfaceStat])
+ * get (most recent [InterfaceStat] 5 minutes before or later) OR (current [InterfaceStat])
  */
 private fun getInitialInterfaceStats(): List<InterfaceStat> {
-    val tenMinutesBefore = Calendar.getInstance().apply {
-        add(Calendar.MINUTE, -10)
+    val fiveMinutesBefore = Calendar.getInstance().apply {
+        add(Calendar.MINUTE, -5)
     }
 
-    // recent stat 1.5 minutes before or later
+    // recent stat 5 minutes before or later
     Realm.getDefaultInstance().use {
         val recentStats = it.where(RealmInterfaceStats::class.java)
-                .greaterThanOrEqualTo("timeStamp", tenMinutesBefore.time)
+                .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
+        println("stat:" + recentStats)
         return recentStats?.let { it.stats.map(RealmInterfaceStat::createInterfaceStat) } ?: getCurrentInterfaceStats()
     }
 }

@@ -40,19 +40,20 @@ private fun getCurrentCPUStat(): CPUStat {
 }
 
 /**
- * get (most recent [CPUStat] 1.5 minutes before or later) OR (current [CPUStat])
+ * get (most recent [CPUStat] 5 minutes before or later) OR (current [CPUStat])
  */
 private fun getInitialCPUStat(): CPUStat {
-    val oneAndHalfMinutesBefore = Calendar.getInstance().apply {
-        add(Calendar.SECOND, -90)
+    val fiveMinutesBefore = Calendar.getInstance().apply {
+        add(Calendar.MINUTE, -5)
     }
 
-    // recent stat 1.5 minutes before or later
+    // recent stat 5 minutes before or later
     Realm.getDefaultInstance().use {
         val recentStat = it.where(RealmCPUStat::class.java)
-                .greaterThanOrEqualTo("timeStamp", oneAndHalfMinutesBefore.time)
+                .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
+        println("stat:" + recentStat)
         return recentStat?.let(RealmCPUStat::createCPUStat) ?: getCurrentCPUStat()
     }
 }
