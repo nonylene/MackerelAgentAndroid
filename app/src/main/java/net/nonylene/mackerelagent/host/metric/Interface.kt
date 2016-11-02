@@ -72,7 +72,6 @@ private fun getInitialInterfaceStats(): List<InterfaceStat> {
                 .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
-        println("stat:" + recentStats)
         return recentStats?.let { it.stats.map(RealmInterfaceStat::createInterfaceStat) } ?: getCurrentInterfaceStats()
     }
 }

@@ -70,7 +70,6 @@ private fun getInitialDiskStats(): List<DiskStat> {
                         .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                         .findAllSorted("timeStamp", Sort.DESCENDING)
                         .firstOrNull()
-        println("stat:" + recentStats)
         return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
     }
 }

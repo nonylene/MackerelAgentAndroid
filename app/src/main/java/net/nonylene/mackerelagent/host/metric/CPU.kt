@@ -53,7 +53,6 @@ private fun getInitialCPUStat(): CPUStat {
                 .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                 .findAllSorted("timeStamp", Sort.DESCENDING)
                 .firstOrNull()
-        println("stat:" + recentStat)
         return recentStat?.let(RealmCPUStat::createCPUStat) ?: getCurrentCPUStat()
     }
 }
