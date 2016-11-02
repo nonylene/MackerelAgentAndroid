@@ -1,31 +1,17 @@
 package net.nonylene.mackerelagent
 
 import android.content.Intent
-import android.os.Build
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceManager
+import android.support.annotation.ColorRes
+import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function
-import io.reactivex.functions.Function3
-import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import net.nonylene.mackerelagent.host.metric.*
-import net.nonylene.mackerelagent.host.spec.*
-import net.nonylene.mackerelagent.network.MackerelApi
-import net.nonylene.mackerelagent.network.model.HostSpecRequest
-import net.nonylene.mackerelagent.network.model.createMetrics
-import net.nonylene.mackerelagent.utils.createGatherMetricsService
-import net.nonylene.mackerelagent.utils.getHostId
-import net.nonylene.mackerelagent.utils.putApiKey
-import net.nonylene.mackerelagent.utils.putHostId
+import net.nonylene.mackerelagent.databinding.ActivityMainBinding
+import net.nonylene.mackerelagent.utils.isGatherMetricsServiceRunning
+import net.nonylene.mackerelagent.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,33 +19,20 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.text_view) as TextView
     }
 
+    lateinit var binding: ActivityMainBinding
+    // todo: after bug fixed (kotlin 1.0.5?), remove model from member variables
+    val model: MainActivityViewModel = MainActivityViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        createGatherMetricsService(this)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        @Suppress("MISSING_DEPENDENCY_CLASS")
+        binding.model = model
+        model.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
     }
 
     override fun onStart() {
         super.onStart()
-        val req = HostSpecRequest(
-                "${Build.MANUFACTURER} ${Build.MODEL}",
-                HostSpecRequest.Meta(
-                        BuildConfig.VERSION_NAME,
-                        getBlockDevicesSpec(),
-                        getCPUSpec(),
-                        getFileSystemsSpec(),
-                        getKernelSpec(),
-                        getMemorySpec()
-                )
-        )
-
-//        MackerelApi.getService(this).updateHostSpec(PreferenceManager.getDefaultSharedPreferences(this).getHostId(this)!!, req).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-//            println(it.hostId)
-//            PreferenceManager.getDefaultSharedPreferences(this).edit().putHostId(it.hostId, this).apply()
-//        }
-//        MackerelApi.getService(this).test().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-//            println(it.string())
-//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -68,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+        when (item?.itemId) {
             R.id.menu_activity_main_preference -> startActivity(Intent(this, MackerelPreferenceActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
@@ -77,5 +50,12 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
 //        disposable?.dispose()
+    }
+
+    enum class Status(@StringRes val text: Int, @ColorRes val color: Int) {
+        RUNNING(R.string.status_running, R.color.status_running),
+        ERROR(R.string.status_error, R.color.status_error),
+        NOT_CONFIGURED(R.string.status_not_configured, R.color.status_not_configured),
+        NOT_RUNNING(R.string.status_not_running, R.color.status_not_running),
     }
 }

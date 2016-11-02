@@ -7,4 +7,9 @@
     <string name="preference_host_id_summary">Usually, this value is set automatically.</string>
     <string name="preference_host_id_title">Host id</string>
     <string name="menu_activity_main_preference">Settings</string>
+    <string name="status_running">RUNNING</string>
+    <string name="status_not_running">NOT RUNNING</string>
+    <string name="status_error">ERROR</string>
+    <string name="status_not_configured">NOT CONFIGURED</string>
+    <string name="status_base">STATUS: ● %1$s</string>
 </resources>
