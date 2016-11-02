@@ -17,10 +17,7 @@ import net.nonylene.mackerelagent.host.spec.*
 import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.createMetrics
-import net.nonylene.mackerelagent.utils.createGatherMetricsService
-import net.nonylene.mackerelagent.utils.getHostId
-import net.nonylene.mackerelagent.utils.putApiKey
-import net.nonylene.mackerelagent.utils.putHostId
+import net.nonylene.mackerelagent.utils.*
 
 class DebugActivity : AppCompatActivity() {
 
@@ -52,28 +49,11 @@ class DebugActivity : AppCompatActivity() {
                         getMemorySpec()
                 )
         )
-        disposable = Observable.combineLatest(getInterfaceMetricsListObservable(),
-                getDiskMetricsListObservable(), getCPUMetricsObservable(),
-                Function3 { interfaceDeltas: List<InterfaceDeltaMetrics>, diskDeltas: List<DiskDeltaMetrics>,
-                            cpuPercentage: CPUPercentageMetrics ->
-                    interfaceDeltas + diskDeltas + cpuPercentage + fileSystemMCs + memoryMetrics + loadavg
-                })
-                .take(1)
-                .retryWhen { observable ->
-                    // retry once
-                    Observable.zip(observable, Observable.range(1, 2), BiFunction { error: Throwable, count: Int ->
-                        error to count
-                    }).flatMap(Function<Pair<Throwable, Int>, Observable<Int>> {
-                        if (it.second > 1) {
-                            Observable.error(it.first)
-                        } else {
-                            Observable.just(it.second)
-                        }
-                    }).doOnNext {
-                        // remove realm cache
-                        Realm.getDefaultInstance().use {
-                            it.executeTransaction(Realm::deleteAll)
-                        }
+        disposable = createMetricsCombineLatestObservable()
+                .retryWith(1) {
+                    // remove realm cache
+                    Realm.getDefaultInstance().use {
+                        it.executeTransaction(Realm::deleteAll)
                     }
                 }
                 .subscribeOn(Schedulers.io())
