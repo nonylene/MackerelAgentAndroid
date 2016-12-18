@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:id="@+id/api_key_input_layout"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/api_key_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/setup_activity_api"
+                android:inputType="textPassword"
+                android:lines="1"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/host_id_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/setup_activity_host"
+                android:inputType="text"
+                android:lines="1"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:enabled="false"
+            android:text="@string/setup_activity_button"
+            />
+    </LinearLayout>
+</layout>

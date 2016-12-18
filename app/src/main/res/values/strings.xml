@@ -12,4 +12,7 @@
     <string name="status_error">ERROR</string>
     <string name="status_not_configured">NOT CONFIGURED</string>
     <string name="status_base">STATUS: ● %1$s</string>
+    <string name="setup_activity_api">API Key (Required)</string>
+    <string name="setup_activity_host">Host Id (Create Host if empty)</string>
+    <string name="setup_activity_button">Start monitoring</string>
 </resources>

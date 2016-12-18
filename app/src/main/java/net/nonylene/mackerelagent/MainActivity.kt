@@ -3,13 +3,17 @@ package net.nonylene.mackerelagent
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.annotation.ColorRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import net.nonylene.mackerelagent.databinding.ActivityMainBinding
+import net.nonylene.mackerelagent.utils.getApiKey
+import net.nonylene.mackerelagent.utils.getHostId
 import net.nonylene.mackerelagent.utils.isGatherMetricsServiceRunning
+import net.nonylene.mackerelagent.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +21,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val preference = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preference.getApiKey(this) == null || preference.getHostId(this) == null) {
+            startActivity(Intent(this, SetupActivity::class.java))
+        }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.model = MainActivityViewModel()
+    }
+
+    override fun onStart() {
+        super.onResume()
         binding.model.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
     }
 

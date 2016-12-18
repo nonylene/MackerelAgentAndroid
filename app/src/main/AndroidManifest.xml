@@ -24,6 +24,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SetupActivity"/>
+
         <receiver
             android:name=".receiver.RebootUpdateReceiver"
             android:process=":remote"

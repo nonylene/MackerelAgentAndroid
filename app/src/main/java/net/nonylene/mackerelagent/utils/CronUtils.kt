@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import net.nonylene.mackerelagent.service.GatherMetricsService
 
-fun createGatherMetricsService(context: Context) {
+fun startGatherMetricsService(context: Context) {
     context.startService(createGatherMetricsServiceIntent(context))
 }
 

@@ -13,12 +13,11 @@ class MainActivityViewModel {
 
     val status: ObservableField<MainActivity.Status> = ObservableField(MainActivity.Status.NOT_RUNNING)
 
-    fun getStatusText(context: Context): SpannableStringBuilder {
-        val st = status.get()
-        val statusText = context.getString(R.string.status_base, context.getString(st.text))
+    fun getStatusText(status: MainActivity.Status, context: Context): SpannableStringBuilder {
+        val statusText = context.getString(R.string.status_base, context.getString(status.text))
         return SpannableStringBuilder(statusText).apply {
             setSpan(ForegroundColorSpan(
-                    ContextCompat.getColor(context, st.color)),
+                    ContextCompat.getColor(context, status.color)),
                     statusText.indexOf("●"),
                     statusText.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
