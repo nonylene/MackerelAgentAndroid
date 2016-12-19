@@ -7,10 +7,12 @@ import net.nonylene.mackerelagent.service.GatherMetricsService
 
 fun startGatherMetricsService(context: Context) {
     context.startService(createGatherMetricsServiceIntent(context))
+    realmLog("Started monitoring service", false)
 }
 
 fun stopGatherMetricsService(context: Context) {
     context.stopService(createGatherMetricsServiceIntent(context))
+    realmLog("Stopped monitoring service", false)
 }
 
 fun createGatherMetricsServiceIntent(context: Context): Intent {

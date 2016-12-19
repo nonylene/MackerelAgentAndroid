@@ -5,6 +5,7 @@
     >
 
     <data>
+
         <variable
             name="model"
             type="net.nonylene.mackerelagent.viewmodel.MainActivityViewModel"
@@ -16,29 +17,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="net.nonylene.mackerelagent.MainActivity"
         >
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
             android:text="@{model.getStatusText(model.status, context)}"
-            android:textStyle="bold"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="STATUS: ● RUNNING"
             />
 
         <Button
             android:id="@+id/button"
-            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
             android:text="@{model.status.action.text}"
             tools:text="Stop monitoring"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
             />
 
     </LinearLayout>

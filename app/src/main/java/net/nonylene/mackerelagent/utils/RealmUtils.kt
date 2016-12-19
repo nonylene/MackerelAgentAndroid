@@ -14,7 +14,7 @@ fun Realm.deleteExceptLog() {
 fun realmLog(text: String?, error: Boolean) {
     Realm.getDefaultInstance().use { realm ->
         realm.executeTransactionAsync {
-            realm.createRealmLog(text, error)
+            realm.createRealmAgentLog(text, error)
         }
     }
 }

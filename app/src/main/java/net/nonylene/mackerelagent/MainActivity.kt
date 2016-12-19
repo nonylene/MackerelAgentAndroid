@@ -7,15 +7,20 @@ import android.preference.PreferenceManager
 import android.support.annotation.ColorRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import io.realm.Realm
+import io.realm.Sort
 import net.nonylene.mackerelagent.databinding.ActivityMainBinding
+import net.nonylene.mackerelagent.realm.RealmAgentLog
 import net.nonylene.mackerelagent.utils.*
 import net.nonylene.mackerelagent.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    val adapter = LogRecyclerAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,20 +33,34 @@ class MainActivity : AppCompatActivity() {
         binding.model = MainActivityViewModel()
 
         binding.button.setOnClickListener {
-            when(binding.model.status.get().action) {
+            when (binding.model.status.get().action) {
                 Action.START -> startGatherMetricsService(this)
                 Action.STOP -> stopGatherMetricsService(this)
                 Action.SETUP -> startActivity(Intent(this, SetupActivity::class.java))
             }
             updateStatus()
         }
+
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        updateStatus()
     }
 
     private fun updateStatus() {
+        val logs = Realm.getDefaultInstance().use {
+            it.where(RealmAgentLog::class.java)
+                    .findAllSorted("timeStamp", Sort.DESCENDING)
+                    .toList()
+        }
+        adapter.logs = logs
         val preference = PreferenceManager.getDefaultSharedPreferences(this)
         if (preference.getApiKey(this) == null || preference.getHostId(this) == null) {
             binding.model.status.set(Status.NOT_CONFIGURED)
         } else {
+            if (logs.firstOrNull()?.error ?: false) {
+                binding.model.status.set(Status.ERROR)
+            }
             binding.model.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
         }
 
