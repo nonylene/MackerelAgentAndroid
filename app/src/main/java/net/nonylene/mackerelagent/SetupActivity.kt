@@ -1,5 +1,6 @@
 package net.nonylene.mackerelagent
 
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -49,6 +50,7 @@ class SetupActivity : AppCompatActivity() {
             val startService = { hostId: String ->
                 preference.edit().putHostId(hostId, v.context).apply()
                 startGatherMetricsService(v.context)
+                startActivity(Intent(v.context, MainActivity::class.java))
                 finish()
             }
 

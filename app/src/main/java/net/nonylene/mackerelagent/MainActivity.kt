@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         val preference = PreferenceManager.getDefaultSharedPreferences(this)
         if (preference.getApiKey(this) == null || preference.getHostId(this) == null) {
             startActivity(Intent(this, SetupActivity::class.java))
+            finish()
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
