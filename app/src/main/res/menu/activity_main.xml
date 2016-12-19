@@ -5,6 +5,13 @@
     >
 
     <item
+        android:id="@+id/menu_activity_reload"
+        android:title="@string/menu_activity_main_reload"
+        android:icon="@drawable/ic_autorenew_black_24dp"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
         android:id="@+id/menu_activity_main_preference"
         android:title="@string/menu_activity_main_preference"
         app:showAsAction="never"

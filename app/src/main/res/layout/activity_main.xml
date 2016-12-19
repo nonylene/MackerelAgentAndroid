@@ -32,6 +32,15 @@
             tools:text="STATUS: ● RUNNING"
             />
 
+        <Button
+            android:id="@+id/button"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{model.status.action.text}"
+            tools:text="Stop monitoring"
+            />
+
     </LinearLayout>
 
 </layout>
