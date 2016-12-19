@@ -16,6 +16,7 @@ import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.createMetrics
 import net.nonylene.mackerelagent.utils.createMetricsCombineLatestObservable
+import net.nonylene.mackerelagent.utils.deleteExceptLog
 import net.nonylene.mackerelagent.utils.retryWith
 import net.nonylene.mackerelagent.utils.startGatherMetricsService
 
@@ -53,7 +54,7 @@ class DebugActivity : AppCompatActivity() {
                 .retryWith(1) {
                     // remove realm cache
                     Realm.getDefaultInstance().use {
-                        it.executeTransaction(Realm::deleteAll)
+                        it.executeTransaction(Realm::deleteExceptLog)
                     }
                 }
                 .subscribeOn(Schedulers.io())

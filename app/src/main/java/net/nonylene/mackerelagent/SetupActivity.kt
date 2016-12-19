@@ -6,14 +6,12 @@ import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.nonylene.mackerelagent.databinding.ActivitySetupBinding
 import net.nonylene.mackerelagent.network.MackerelApi
-import net.nonylene.mackerelagent.utils.createHostSpecRequest
-import net.nonylene.mackerelagent.utils.putApiKey
-import net.nonylene.mackerelagent.utils.putHostId
-import net.nonylene.mackerelagent.utils.startGatherMetricsService
+import net.nonylene.mackerelagent.utils.*
 
 class SetupActivity : AppCompatActivity() {
 
@@ -60,10 +58,17 @@ class SetupActivity : AppCompatActivity() {
                         .postHostSpec(createHostSpecRequest())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
+                        .subscribe({
                             binding.button.text = "Host created !"
+                            realmLog("created Host", false)
                             startService(it.hostId)
-                        }
+                        }, { error ->
+                            binding.button.text = getString(R.string.setup_activity_button)
+                            binding.button.isEnabled = true
+                            val message = createErrorMessage(error)
+                            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                            realmLog(message, true)
+                        })
             } else {
                 startService(hostId.toString())
             }
