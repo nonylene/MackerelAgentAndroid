@@ -1,6 +1,7 @@
 package net.nonylene.mackerelagent.utils
 
 import io.realm.Realm
+import io.realm.Sort
 import net.nonylene.mackerelagent.realm.*
 
 fun Realm.deleteExceptLog() {
@@ -14,11 +15,12 @@ fun Realm.deleteExceptLog() {
 fun realmLog(text: String?, error: Boolean) {
     Realm.getDefaultInstance().use {
         it.executeTransactionAsync { realm ->
-            // limit logs up to 200
+            // limit logs less than 200
             val logs = realm.where(RealmAgentLog::class.java)
+                    .findAllSorted("timeStamp", Sort.DESCENDING)
             val count = logs.count()
             (200 until count).forEach {
-                logs.findAll().deleteLastFromRealm()
+                logs.deleteLastFromRealm()
             }
             realm.createRealmAgentLog(text, error)
         }
