@@ -51,7 +51,7 @@ class GatherMetricsService : Service() {
                     updateNotification(true)
                 })
 
-        collectMetricsDisposable = Observable.interval(0, 1, TimeUnit.MINUTES)
+        collectMetricsDisposable = Observable.interval(0, 60, TimeUnit.SECONDS)
                 .flatMap {
                     createMetricsCombineLatestObservable()
                 }
@@ -80,7 +80,7 @@ class GatherMetricsService : Service() {
                     updateNotification(true)
                 })
 
-        sendMetricsDisposable = Observable.interval(3, 5, TimeUnit.MINUTES)
+        sendMetricsDisposable = Observable.interval(150, 300, TimeUnit.SECONDS)
                 .filter { isNetworkAvailable() }
                 .flatMap {
                     val metrics = Realm.getDefaultInstance().use { realm ->
