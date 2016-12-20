@@ -11,7 +11,6 @@ import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.WakefulBroadcastReceiver
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
@@ -49,7 +48,8 @@ class GatherMetricsService : Service() {
 
         disposable = Observable.interval(0, 1, TimeUnit.MINUTES)
                 .flatMap {
-                    createMetricsCombineLatestObservable() }
+                    createMetricsCombineLatestObservable()
+                }
                 .retryWith(1) {
                     // remove realm cache
                     Realm.getDefaultInstance().use {
@@ -58,7 +58,6 @@ class GatherMetricsService : Service() {
                 }
                 .flatMap { MackerelApi.getService(this).postMetrics(createMetrics(it, this)) }
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     realmLog("Metrics posted", false)
                     updateNotification(false)
@@ -75,7 +74,7 @@ class GatherMetricsService : Service() {
         return NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("MackerelAgent")
-                .setContentText("Monitoring..." + if (error) " - error occurred!" else "" )
+                .setContentText("Monitoring" + if (error) " - error occurred!" else "")
                 .setContentIntent(pendingIntent)
                 .build()
     }
