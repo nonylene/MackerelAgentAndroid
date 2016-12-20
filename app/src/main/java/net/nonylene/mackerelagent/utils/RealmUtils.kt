@@ -2,15 +2,8 @@ package net.nonylene.mackerelagent.utils
 
 import io.realm.Realm
 import io.realm.Sort
-import net.nonylene.mackerelagent.realm.*
-
-fun Realm.deleteExceptLog() {
-    delete(RealmCPUStat::class.java)
-    delete(RealmDiskStat::class.java)
-    delete(RealmDiskStats::class.java)
-    delete(RealmInterfaceStat::class.java)
-    delete(RealmInterfaceStats::class.java)
-}
+import net.nonylene.mackerelagent.realm.RealmAgentLog
+import net.nonylene.mackerelagent.realm.createRealmAgentLog
 
 fun realmLog(text: String?, error: Boolean) {
     Realm.getDefaultInstance().use {

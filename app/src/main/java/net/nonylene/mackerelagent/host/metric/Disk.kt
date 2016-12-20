@@ -2,11 +2,6 @@ package net.nonylene.mackerelagent.host.metric
 
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
-import io.realm.Sort
-import net.nonylene.mackerelagent.realm.RealmDiskStat
-import net.nonylene.mackerelagent.realm.RealmDiskStats
-import net.nonylene.mackerelagent.realm.createRealmDiskStats
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,19 +9,9 @@ import java.util.concurrent.TimeUnit
 fun getDiskMetricsListObservable(): Observable<List<DiskDeltaMetrics>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentDiskStats() }
-            // save result cache to realm
-            .doOnNext { stats ->
-                Realm.getDefaultInstance().use {
-                    it.executeTransactionAsync { realm ->
-                        realm.delete(RealmDiskStats::class.java)
-                        realm.delete(RealmDiskStat::class.java)
-                        realm.createRealmDiskStats(stats)
-                    }
-                }
-            }
             // initial value will be evaluated immediately
-            // use lambda to get latest realm result after retry
-            .scanWith({ null to getInitialDiskStats() }, { beforePair: Pair<List<DiskDeltaMetrics>?, List<DiskStat>>, after ->
+            // use lambda to get latest result after retry
+            .scanWith({ null to getCurrentDiskStats() }, { beforePair: Pair<List<DiskDeltaMetrics>?, List<DiskStat>>, after ->
                 val beforeList = beforePair.second
                 after.mapNotNull { afterStat ->
                     beforeList.find { it.name == afterStat.name }?.let { beforeStat ->
@@ -54,24 +39,6 @@ private fun getCurrentDiskStats(): List<DiskStat> {
                         values[7], values[8], values[9], values[10], time
                 )
             }
-}
-
-/**
- * get (most recent [DiskStat] 5 minutes before or later) OR (current [DiskStat])
- */
-private fun getInitialDiskStats(): List<DiskStat> {
-    val fiveMinutesBefore = Calendar.getInstance().apply {
-        add(Calendar.MINUTE, -5)
-    }
-
-    // recent stat 5 minutes before or later
-    Realm.getDefaultInstance().use {
-        val recentStats = it.where(RealmDiskStats::class.java)
-                        .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
-                        .findAllSorted("timeStamp", Sort.DESCENDING)
-                        .firstOrNull()
-        return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
-    }
 }
 
 private fun createDiskDeltaMetrics(before: DiskStat, after: DiskStat): DiskDeltaMetrics {

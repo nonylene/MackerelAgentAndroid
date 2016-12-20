@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
@@ -13,13 +14,14 @@ import android.support.v4.content.WakefulBroadcastReceiver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 import net.nonylene.mackerelagent.MainActivity
 import net.nonylene.mackerelagent.R
 import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.createMetrics
 import net.nonylene.mackerelagent.utils.*
 import java.util.concurrent.TimeUnit
+
+
 
 class GatherMetricsService : Service() {
 
@@ -51,12 +53,11 @@ class GatherMetricsService : Service() {
                     createMetricsCombineLatestObservable()
                 }
                 .retryWith(1) {
-                    // remove realm cache
-                    Realm.getDefaultInstance().use {
-                        it.executeTransaction(Realm::deleteExceptLog)
-                    }
+                    realmLog("Failed to create metrics; retry once", true)
                 }
-                .flatMap { MackerelApi.getService(this).postMetrics(createMetrics(it, this)) }
+                // request per 5 minutes
+                .buffer(5)
+                .flatMap { MackerelApi.getService(this).postMetrics(createMetrics(it.flatten(), this)) }
                 .subscribeOn(Schedulers.io())
                 .subscribe({
                     realmLog("Metrics posted", false)
@@ -65,6 +66,12 @@ class GatherMetricsService : Service() {
                     realmLog(createErrorMessage(error), true)
                     updateNotification(true)
                 })
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     private fun createNotification(error: Boolean): Notification {

@@ -7,7 +7,6 @@ import android.widget.TextView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 import net.nonylene.mackerelagent.host.metric.getFileSystemMetricsList
 import net.nonylene.mackerelagent.host.metric.getLoadAverageMetrics
 import net.nonylene.mackerelagent.host.metric.getMemoryMetrics
@@ -16,7 +15,6 @@ import net.nonylene.mackerelagent.network.MackerelApi
 import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.createMetrics
 import net.nonylene.mackerelagent.utils.createMetricsCombineLatestObservable
-import net.nonylene.mackerelagent.utils.deleteExceptLog
 import net.nonylene.mackerelagent.utils.retryWith
 import net.nonylene.mackerelagent.utils.startGatherMetricsService
 
@@ -52,10 +50,10 @@ class DebugActivity : AppCompatActivity() {
         )
         disposable = createMetricsCombineLatestObservable()
                 .retryWith(1) {
-                    // remove realm cache
-                    Realm.getDefaultInstance().use {
-                        it.executeTransaction(Realm::deleteExceptLog)
-                    }
+//                    // remove realm cache
+//                    Realm.getDefaultInstance().use {
+//                        it.executeTransaction(Realm::deleteExceptLog)
+//                    }
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
