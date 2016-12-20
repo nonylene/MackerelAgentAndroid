@@ -71,7 +71,7 @@ private fun getToolboxDfStats(): List<FileSystemStat> {
                         size,
                         used,
                         restoreKBytes(it[3]),
-                        size.toDouble() / used.toDouble() * 100,
+                        used.toDouble() / size.toDouble() * 100,
                         name
                 )
             }
