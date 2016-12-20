@@ -14,6 +14,12 @@ fun Realm.deleteExceptLog() {
 fun realmLog(text: String?, error: Boolean) {
     Realm.getDefaultInstance().use {
         it.executeTransactionAsync { realm ->
+            // limit logs up to 200
+            val logs = realm.where(RealmAgentLog::class.java)
+            val count = logs.count()
+            (200 until count).forEach {
+                logs.findAll().deleteLastFromRealm()
+            }
             realm.createRealmAgentLog(text, error)
         }
     }
