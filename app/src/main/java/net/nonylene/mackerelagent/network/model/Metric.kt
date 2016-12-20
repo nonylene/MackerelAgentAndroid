@@ -24,14 +24,9 @@ data class Metric(
 )
 
 fun createMetrics(metricsContainers: List<MetricsContainer>, context: Context): List<Metric> {
-    val metrics = metricsContainers.map {
-        createMetricsFromMetricContainer(it, context)
-    }.reduce { acc, items ->
-        items.forEach { item ->
-            if (acc.any { it.name == item.name }) throw RuntimeException("key ${item.name} is duplicated")
-        }
-        items + acc
-    }
+    val metrics = metricsContainers
+            .map { createMetricsFromMetricContainer(it, context) }
+            .reduce { acc, items -> items + acc }
     return metrics
 }
 
