@@ -19,4 +19,7 @@
     <string name="setup_activity_host">Host Id (If already exists)</string>
     <string name="setup_activity_button">Start monitoring</string>
     <string name="menu_activity_main_reload">Reload Status</string>
+    <string name="preference_oss_title">Open source libraries</string>
+    <string name="preference_oss_summary">Tap to open</string>
+    <string name="preference_oss_key">open_source</string>
 </resources>
