@@ -97,7 +97,7 @@ class GatherMetricsService : Service() {
                                     }
                             )
                             .subscribeOn(Schedulers.io())
-                            .buffer(300)
+                            .buffer(400)
                             .subscribe({ wrappers ->
                                 val max = wrappers.last().id
                                 val min = wrappers.first().id
