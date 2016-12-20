@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity() {
                     .findAllSorted("timeStamp", Sort.DESCENDING)
                     .map(RealmAgentLog::createAgentLog)
         }
-        adapter.logs = logs
         val preference = PreferenceManager.getDefaultSharedPreferences(this)
         if (preference.getApiKey(this) == null || preference.getHostId(this) == null) {
             binding.model.status.set(Status.NOT_CONFIGURED)
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             }
             binding.model.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
         }
-
+        adapter.logs = logs
     }
 
     override fun onStart() {
