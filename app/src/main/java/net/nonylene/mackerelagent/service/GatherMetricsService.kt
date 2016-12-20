@@ -138,7 +138,7 @@ class GatherMetricsService : Service() {
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, notificationIntent, 0)
 
         return NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.notification)
                 .setContentTitle("MackerelAgent")
                 .setContentText("Monitoring" + if (error) " - error occurred!" else "")
                 .setContentIntent(pendingIntent)
