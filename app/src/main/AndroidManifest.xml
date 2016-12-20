@@ -28,7 +28,6 @@
 
         <receiver
             android:name=".receiver.RebootUpdateReceiver"
-            android:process=":remote"
             >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"
