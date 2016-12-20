@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import io.realm.Realm
 import io.realm.Sort
 import net.nonylene.mackerelagent.databinding.ActivityMainBinding
 import net.nonylene.mackerelagent.realm.RealmAgentLog
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateStatus() {
-        val logs = Realm.getDefaultInstance().use {
+        val logs = realmUseWithLock {
             it.where(RealmAgentLog::class.java)
                     .findAllSorted("timeStamp", Sort.DESCENDING)
                     .map(RealmAgentLog::createAgentLog)

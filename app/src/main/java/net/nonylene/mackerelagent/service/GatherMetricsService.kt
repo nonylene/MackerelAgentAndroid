@@ -14,7 +14,6 @@ import android.support.v4.content.WakefulBroadcastReceiver
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 import io.realm.Sort
 import net.nonylene.mackerelagent.MainActivity
 import net.nonylene.mackerelagent.R
@@ -61,7 +60,7 @@ class GatherMetricsService : Service() {
                 .subscribeOn(Schedulers.io())
                 .map { createMetrics(it, this) }
                 .subscribe({ metrics ->
-                    Realm.getDefaultInstance().use {
+                    realmUseWithLock {
                         it.executeTransactionAsync { realm ->
                             // limit logs less than 1000
                             val logs = realm.where(RealmMetricJson::class.java)
@@ -81,9 +80,8 @@ class GatherMetricsService : Service() {
                 })
 
         sendMetricsDisposable = Observable.interval(150, 300, TimeUnit.SECONDS)
-                .filter { isNetworkAvailable() }
                 .flatMap {
-                    val metrics = Realm.getDefaultInstance().use { realm ->
+                    val metrics = realmUseWithLock { realm ->
                         realm.where(RealmMetricJson::class.java)
                                 .findAll()
                                 .map(RealmMetricJson::createMetric)
@@ -94,6 +92,9 @@ class GatherMetricsService : Service() {
                 .subscribe({
                     realmLog("Metrics posted", false)
                     updateNotification(false)
+                    realmUseWithLock { realm ->
+                        realm.delete(RealmMetricJson::class.java)
+                    }
                 }, { error ->
                     realmLog(createErrorMessage(error), true)
                     updateNotification(true)
