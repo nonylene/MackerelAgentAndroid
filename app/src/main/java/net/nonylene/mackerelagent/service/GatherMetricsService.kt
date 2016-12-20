@@ -32,6 +32,7 @@ class GatherMetricsService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        realmLog("Starting monitoring service", false)
         startForeground(NOTIFY_ID, createNotification(false))
 
         // update host spec onCreate
@@ -39,7 +40,7 @@ class GatherMetricsService : Service() {
                 .updateHostSpec(PreferenceManager.getDefaultSharedPreferences(this).getHostId(this)!!, createHostSpecRequest())
                 .subscribeOn(Schedulers.io())
                 .subscribe({
-                    realmLog("Updated Host", false)
+                    realmLog("Host updated", false)
                     updateNotification(false)
                 }, { error ->
                     realmLog(createErrorMessage(error), true)
@@ -59,7 +60,7 @@ class GatherMetricsService : Service() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    realmLog("Posted metrics", false)
+                    realmLog("Metrics posted", false)
                     updateNotification(false)
                 }, { error ->
                     realmLog(createErrorMessage(error), true)
@@ -91,6 +92,7 @@ class GatherMetricsService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        realmLog("Stopping monitoring service", false)
         disposable?.dispose()
     }
 
