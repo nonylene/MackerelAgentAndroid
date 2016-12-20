@@ -33,7 +33,6 @@ class GatherMetricsService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        realmLog("Starting monitoring service", false)
         startForeground(NOTIFY_ID, createNotification(false))
 
         // update host spec onCreate
@@ -66,6 +65,8 @@ class GatherMetricsService : Service() {
                     realmLog(createErrorMessage(error), true)
                     updateNotification(true)
                 })
+
+        realmLog("Started monitoring service", false)
     }
 
     private fun isNetworkAvailable(): Boolean {
@@ -98,8 +99,8 @@ class GatherMetricsService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        realmLog("Stopping monitoring service", false)
         disposable?.dispose()
+        realmLog("Stopped monitoring service", false)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
