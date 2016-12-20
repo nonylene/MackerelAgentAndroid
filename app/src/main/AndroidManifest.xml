@@ -45,7 +45,6 @@
 
         <service
             android:name=".service.GatherMetricsService"
-            android:process=":remote"
             />
     </application>
 
