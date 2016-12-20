@@ -16,7 +16,7 @@
     <string name="action_stop">STOP MONITORING</string>
     <string name="action_setup">SETUP</string>
     <string name="setup_activity_api">API Key (Required)</string>
-    <string name="setup_activity_host">Host Id (Create Host if empty)</string>
+    <string name="setup_activity_host">Host Id (If already exists)</string>
     <string name="setup_activity_button">Start monitoring</string>
     <string name="menu_activity_main_reload">Reload Status</string>
 </resources>

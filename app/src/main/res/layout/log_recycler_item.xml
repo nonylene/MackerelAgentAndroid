@@ -6,6 +6,8 @@
 
     <data>
 
+        <import type="android.support.v4.content.ContextCompat"/>
+
         <variable
             name="model"
             type="net.nonylene.mackerelagent.viewmodel.LogRecyclerItemViewModel"
@@ -18,20 +20,32 @@
         android:orientation="horizontal">
 
         <View
-            android:layout_width="12dp"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
-            android:background="@{model.color}"
+            android:background="@{ContextCompat.getColor(context, model.colorRes)}"
             tools:background="@color/status_running"
             />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:layout_weight="1"
+            android:padding="8dp"
             android:text="@{model.text}"
-            android:textSize="16sp"
+            android:textSize="14sp"
             tools:text="hogehoge"
             />
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{model.dateText}"
+            android:padding="8dp"
+            android:textSize="12sp"
+            tools:text="2016/12/20 12:14:20"
+            />
+
 
     </LinearLayout>
 </layout>

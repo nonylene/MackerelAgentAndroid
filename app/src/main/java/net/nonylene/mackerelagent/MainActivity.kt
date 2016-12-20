@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         val logs = Realm.getDefaultInstance().use {
             it.where(RealmAgentLog::class.java)
                     .findAllSorted("timeStamp", Sort.DESCENDING)
-                    .toList()
+                    .map(RealmAgentLog::createAgentLog)
         }
         adapter.logs = logs
         val preference = PreferenceManager.getDefaultSharedPreferences(this)

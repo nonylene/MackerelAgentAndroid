@@ -61,7 +61,7 @@ class SetupActivity : AppCompatActivity() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({
                             binding.button.text = "Host created !"
-                            realmLog("created Host", false)
+                            realmLog("Host created", false)
                             startService(it.hostId)
                         }, { error ->
                             binding.button.text = getString(R.string.setup_activity_button)

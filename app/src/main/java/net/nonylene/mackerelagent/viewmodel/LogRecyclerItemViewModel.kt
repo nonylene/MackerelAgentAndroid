@@ -2,17 +2,22 @@ package net.nonylene.mackerelagent.viewmodel
 
 import android.databinding.ObservableField
 import android.support.annotation.ColorRes
+import net.nonylene.mackerelagent.AgentLog
 import net.nonylene.mackerelagent.R
-import net.nonylene.mackerelagent.realm.RealmAgentLog
+import java.text.SimpleDateFormat
+
+private val DATE_FORMAT = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
 
 class LogRecyclerItemViewModel {
     val text: ObservableField<String> = ObservableField()
+    val dateText: ObservableField<String> = ObservableField()
     @ColorRes
-    val color: ObservableField<Int> = ObservableField()
+    val colorRes: ObservableField<Int> = ObservableField()
 
-    fun setRealmLog(agentLog: RealmAgentLog) {
+    fun setRealmLog(agentLog: AgentLog) {
         text.set(agentLog.text)
-        color.set(if (agentLog.error) R.color.status_error else R.color.status_running)
+        colorRes.set(if (agentLog.error) R.color.status_error else R.color.status_running)
+        dateText.set(DATE_FORMAT.format(agentLog.timeStamp))
     }
 }
 

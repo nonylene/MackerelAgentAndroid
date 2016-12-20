@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import net.nonylene.mackerelagent.databinding.LogRecyclerItemBinding
-import net.nonylene.mackerelagent.realm.RealmAgentLog
+import net.nonylene.mackerelagent.viewmodel.LogRecyclerItemViewModel
 
 class LogRecyclerAdapter : RecyclerView.Adapter<LogRecyclerAdapter.ViewHolder>() {
 
-    var logs: List<RealmAgentLog> = listOf()
+    var logs: List<AgentLog> = listOf()
     set(value) {
         field = value
         notifyDataSetChanged()
@@ -32,6 +32,7 @@ class LogRecyclerAdapter : RecyclerView.Adapter<LogRecyclerAdapter.ViewHolder>()
 
         init {
             binding = DataBindingUtil.bind(itemView)
+            binding.model = LogRecyclerItemViewModel()
         }
     }
 }
