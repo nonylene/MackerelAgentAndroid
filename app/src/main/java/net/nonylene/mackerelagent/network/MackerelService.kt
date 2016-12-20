@@ -5,6 +5,7 @@ import net.nonylene.mackerelagent.network.model.HostSpecRequest
 import net.nonylene.mackerelagent.network.model.HostSpecResponse
 import net.nonylene.mackerelagent.network.model.Metric
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -16,7 +17,7 @@ interface MackerelService {
     fun postMetrics(
             @Body
             metrics: List<Metric>
-    ): Observable<ResponseBody>
+    ): Call<ResponseBody>
 
     @POST("/api/v0/hosts")
     fun postHostSpec(

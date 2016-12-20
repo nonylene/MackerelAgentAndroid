@@ -7,7 +7,7 @@ import net.nonylene.mackerelagent.realm.createRealmAgentLog
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-private val REALM_LOCK = ReentrantLock()
+val REALM_LOCK = ReentrantLock()
 
 fun <R> realmUseWithLock(action: (Realm) -> R): R {
     REALM_LOCK.withLock {
