@@ -45,7 +45,8 @@ class SetupActivity : AppCompatActivity() {
             preference.edit().putApiKey(binding.apiKeyEditText.text.toString(), v.context).apply()
 
             val startService = { hostId: String ->
-                preference.edit().putHostId(hostId, v.context).apply()
+                // use commit because other process uses this value
+                preference.edit().putHostId(hostId, v.context).commit()
                 startGatherMetricsService(v.context)
                 finish()
             }

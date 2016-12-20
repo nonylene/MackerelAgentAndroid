@@ -2,10 +2,13 @@ package net.nonylene.mackerelagent.receiver
 
 import android.content.Context
 import android.content.Intent
+import android.preference.PreferenceManager
 import android.support.v4.content.WakefulBroadcastReceiver
 import io.realm.Realm
 import net.nonylene.mackerelagent.utils.createGatherMetricsServiceIntent
 import net.nonylene.mackerelagent.utils.deleteExceptLog
+import net.nonylene.mackerelagent.utils.getApiKey
+import net.nonylene.mackerelagent.utils.getHostId
 
 class RebootUpdateReceiver : WakefulBroadcastReceiver() {
 
@@ -14,7 +17,10 @@ class RebootUpdateReceiver : WakefulBroadcastReceiver() {
         Realm.getDefaultInstance().use {
             it.executeTransaction(Realm::deleteExceptLog)
         }
-        startWakefulService(context, createGatherMetricsServiceIntent(context))
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        if (pref.getApiKey(context) != null && pref.getHostId(context) != null) {
+            startWakefulService(context, createGatherMetricsServiceIntent(context))
+        }
     }
 
 }
