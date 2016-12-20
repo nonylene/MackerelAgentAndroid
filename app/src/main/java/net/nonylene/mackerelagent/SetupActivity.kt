@@ -21,7 +21,7 @@ class SetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setup)
 
-        binding.apiKeyInputLayout.error = "Api Key is required"
+        binding.apiKeyInputLayout.error = "Api key is required"
         binding.apiKeyEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
             }
@@ -31,7 +31,7 @@ class SetupActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.isEmpty()) {
-                    binding.apiKeyInputLayout.error = "API Key is required"
+                    binding.apiKeyInputLayout.error = "API key is required"
                     binding.button.isEnabled = false
                 } else {
                     binding.apiKeyInputLayout.error = null
