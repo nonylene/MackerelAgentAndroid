@@ -2,6 +2,10 @@ package net.nonylene.mackerelagent.host.metric
 
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.Sort
+import net.nonylene.mackerelagent.realm.RealmCPUStat
+import net.nonylene.mackerelagent.realm.createRealmCPUStat
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -9,9 +13,17 @@ import java.util.concurrent.TimeUnit
 fun getCPUMetricsObservable(): Observable<CPUPercentageMetrics> {
     // map / doOnNext will be executed 2 SECONDS after initialize
     return Observable.interval(2, TimeUnit.SECONDS).map { getCurrentCPUStat() }
+            // save result cache to realm
+            .doOnNext { stat ->
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        realm.delete(RealmCPUStat::class.java)
+                        realm.createRealmCPUStat(stat)
+                    }
+                }
+            }
             // initial value will be evaluated immediately
-            // use lambda to get latest result after retry
-            .scanWith({null to getCurrentCPUStat()}, { beforePair: Pair<CPUPercentageMetrics?, CPUStat>, after ->
+            .scanWith({ null to getInitialCPUStat() }, { beforePair: Pair<CPUPercentageMetrics?, CPUStat>, after ->
                 createCPUPercentageMetrics(beforePair.second, after) to after
             }).skip(1)
             // skip first -> nonnull
@@ -25,6 +37,24 @@ private fun getCurrentCPUStat(): CPUStat {
     val stat = CPUStat(values[0], values[1], values[2], values[3],
             values[4], values[5], values[6], values[7], values[8], values[9], Date())
     return stat
+}
+
+/**
+ * get (most recent [CPUStat] 5 minutes before or later) OR (current [CPUStat])
+ */
+private fun getInitialCPUStat(): CPUStat {
+    val fiveMinutesBefore = Calendar.getInstance().apply {
+        add(Calendar.MINUTE, -5)
+    }
+
+    // recent stat 5 minutes before or later
+    Realm.getDefaultInstance().use {
+        val recentStat = it.where(RealmCPUStat::class.java)
+                .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
+                .findAllSorted("timeStamp", Sort.DESCENDING)
+                .firstOrNull()
+        return recentStat?.let(RealmCPUStat::createCPUStat) ?: getCurrentCPUStat()
+    }
 }
 
 private fun createCPUPercentageMetrics(before: CPUStat, after: CPUStat): CPUPercentageMetrics {

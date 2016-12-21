@@ -2,6 +2,11 @@ package net.nonylene.mackerelagent.host.metric
 
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.Sort
+import net.nonylene.mackerelagent.realm.RealmInterfaceStat
+import net.nonylene.mackerelagent.realm.RealmInterfaceStats
+import net.nonylene.mackerelagent.realm.createRealmInterfaceStats
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -9,9 +14,19 @@ import java.util.concurrent.TimeUnit
 fun getInterfaceMetricsListObservable(): Observable<List<InterfaceDeltaMetrics>> {
     // map / doOnNext will be executed 5 SECONDS after initialize
     return Observable.interval(5, TimeUnit.SECONDS).map { getCurrentInterfaceStats() }
+            // save result cache to realm
+            .doOnNext { stats ->
+                Realm.getDefaultInstance().use {
+                    it.executeTransactionAsync { realm ->
+                        realm.delete(RealmInterfaceStats::class.java)
+                        realm.delete(RealmInterfaceStat::class.java)
+                        realm.createRealmInterfaceStats(stats)
+                    }
+                }
+            }
             // initial value will be evaluated immediately
-            // use lambda to get latest result after retry
-            .scanWith({ null to getCurrentInterfaceStats() }, { beforePair: Pair<List<InterfaceDeltaMetrics>?, List<InterfaceStat>>, after ->
+            // use lambda to get latest realm result after retry
+            .scanWith({ null to getInitialInterfaceStats() }, { beforePair: Pair<List<InterfaceDeltaMetrics>?, List<InterfaceStat>>, after ->
                 val beforeList = beforePair.second
                 after.mapNotNull { afterStat ->
                     beforeList.find { it.name == afterStat.name }?.let { beforeStat ->
@@ -41,6 +56,24 @@ private fun getCurrentInterfaceStats(): List<InterfaceStat> {
                         values[14], values[15], time
                 )
             }
+}
+
+/**
+ * get (most recent [InterfaceStat] 5 minutes before or later) OR (current [InterfaceStat])
+ */
+private fun getInitialInterfaceStats(): List<InterfaceStat> {
+    val fiveMinutesBefore = Calendar.getInstance().apply {
+        add(Calendar.MINUTE, -5)
+    }
+
+    // recent stat 5 minutes before or later
+    Realm.getDefaultInstance().use {
+        val recentStats = it.where(RealmInterfaceStats::class.java)
+                .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
+                .findAllSorted("timeStamp", Sort.DESCENDING)
+                .firstOrNull()
+        return recentStats?.let { it.stats.map(RealmInterfaceStat::createInterfaceStat) } ?: getCurrentInterfaceStats()
+    }
 }
 
 private fun createInterfaceMetrics(before: InterfaceStat, after: InterfaceStat): InterfaceDeltaMetrics {

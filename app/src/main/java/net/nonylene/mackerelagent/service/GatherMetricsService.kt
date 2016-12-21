@@ -17,6 +17,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import io.realm.Sort
+import io.realm.Realm
 import net.nonylene.mackerelagent.MainActivity
 import net.nonylene.mackerelagent.R
 import net.nonylene.mackerelagent.network.MackerelApi
@@ -26,9 +27,6 @@ import net.nonylene.mackerelagent.realm.RealmMetricJson
 import net.nonylene.mackerelagent.realm.createRealmMetricJson
 import net.nonylene.mackerelagent.utils.*
 import java.util.concurrent.TimeUnit
-
-
-
 
 class GatherMetricsService : Service() {
 
@@ -58,6 +56,9 @@ class GatherMetricsService : Service() {
                 .subscribe {
                     createMetricsCombineLatestObservable()
                             .retryWith(1) {
+                                realmUseWithLock {
+                                    it.executeTransaction(Realm::deleteExceptLog)
+                                }
                                 realmLog("Failed to create metrics; retry once", true)
                             }
                             .subscribeOn(Schedulers.io())
