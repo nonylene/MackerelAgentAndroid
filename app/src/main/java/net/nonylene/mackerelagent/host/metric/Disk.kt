@@ -70,7 +70,7 @@ private fun getInitialDiskStats(): List<DiskStat> {
                         .greaterThanOrEqualTo("timeStamp", fiveMinutesBefore.time)
                         .findAllSorted("timeStamp", Sort.DESCENDING)
                         .firstOrNull()
-        return recentStats?.let { it.stats.map(RealmDiskStat::createDiskStat) } ?: getCurrentDiskStats()
+        return recentStats?.stats?.map(RealmDiskStat::createDiskStat) ?: getCurrentDiskStats()
     }
 }
 
@@ -81,6 +81,7 @@ private fun createDiskDeltaMetrics(before: DiskStat, after: DiskStat): DiskDelta
     val readsDiff = after.reads - before.reads
     val writesDiff = after.writes - before.writes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
+    if (readsDiff < 0 || writesDiff < 0) throw IllegalStateException("DiskDelta has minus value (reset?)")
     return DiskDeltaMetrics(readsDiff / secDiff, writesDiff / secDiff, after.name, after.timeStamp)
 }
 

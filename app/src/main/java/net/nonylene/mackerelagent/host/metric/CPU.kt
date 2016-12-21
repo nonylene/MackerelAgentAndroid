@@ -57,7 +57,7 @@ private fun getInitialCPUStat(): CPUStat {
     }
 }
 
-private fun createCPUPercentageMetrics(before: CPUStat, after: CPUStat): CPUPercentageMetrics {
+private fun createCPUPercentageMetrics(before: CPUStat, after: CPUStat): CPUPercentageMetrics? {
     // merge all diffs
     val userDiff = after.user - before.user
     val niceDiff = after.nice - before.nice
@@ -71,6 +71,9 @@ private fun createCPUPercentageMetrics(before: CPUStat, after: CPUStat): CPUPerc
     val guestNiceDiff = after.guestNice - before.guestNice
 
     val allDiff = userDiff + niceDiff + systemDiff + idleDiff + iowaitDiff + irqDiff + softirqDiff + stealDiff + guestDiff + guestNiceDiff
+    arrayOf(userDiff, niceDiff, systemDiff, idleDiff, iowaitDiff, irqDiff, softirqDiff, stealDiff, guestDiff, guestNiceDiff).forEach {
+        if (it < 0) throw IllegalStateException("CPU diff has minus value (reset?)")
+    }
     return CPUPercentageMetrics(
             userDiff / allDiff * 100,
             niceDiff / allDiff * 100,

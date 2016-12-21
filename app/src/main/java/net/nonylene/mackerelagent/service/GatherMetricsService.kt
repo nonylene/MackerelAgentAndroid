@@ -16,8 +16,8 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import io.realm.Sort
 import io.realm.Realm
+import io.realm.Sort
 import net.nonylene.mackerelagent.MainActivity
 import net.nonylene.mackerelagent.R
 import net.nonylene.mackerelagent.network.MackerelApi

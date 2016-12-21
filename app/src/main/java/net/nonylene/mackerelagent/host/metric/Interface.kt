@@ -76,13 +76,15 @@ private fun getInitialInterfaceStats(): List<InterfaceStat> {
     }
 }
 
-private fun createInterfaceMetrics(before: InterfaceStat, after: InterfaceStat): InterfaceDeltaMetrics {
+// @return null if metric has minus value
+private fun createInterfaceMetrics(before: InterfaceStat, after: InterfaceStat): InterfaceDeltaMetrics? {
     if (before.name != after.name) {
         throw IllegalArgumentException("before stat name (${before.name}) and after stat name (${after.name}) are not the same")
     }
     val receiveDiff = after.receiveBytes - before.receiveBytes
     val transmitDiff = after.transmitBytes - before.transmitBytes
     val secDiff = (after.timeStamp.time - before.timeStamp.time) / 1000
+    if (receiveDiff < 0 || transmitDiff < 0) throw IllegalStateException("Interface Delta has minus value (reset?)")
     return InterfaceDeltaMetrics(receiveDiff / secDiff, transmitDiff / secDiff, after.name, after.timeStamp)
 }
 
