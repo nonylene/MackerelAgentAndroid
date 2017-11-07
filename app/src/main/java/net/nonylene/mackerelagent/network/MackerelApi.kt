@@ -45,7 +45,7 @@ object MackerelApi {
 
             val retrofit = Retrofit.Builder()
                     .client(builder.build())
-                    .baseUrl("https://mackerel.io/")
+                    .baseUrl("https://api.mackerelio.com/")
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(GSON_IGNORE_EXCLUDE_ANNOTATION))
                     .build()
