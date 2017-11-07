@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.WakefulBroadcastReceiver
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -26,6 +25,7 @@ import net.nonylene.mackerelagent.network.model.createMetrics
 import net.nonylene.mackerelagent.realm.RealmMetricJson
 import net.nonylene.mackerelagent.realm.createRealmMetricJson
 import net.nonylene.mackerelagent.utils.*
+import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
 
 class GatherMetricsService : Service() {

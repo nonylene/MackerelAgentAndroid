@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import net.nonylene.mackerelagent.host.metric.MetricVariable
 import net.nonylene.mackerelagent.host.metric.MetricsContainer
 import net.nonylene.mackerelagent.utils.getHostId
-import kotlin.reflect.memberProperties
+import kotlin.reflect.full.memberProperties
 
 /**
  * https://mackerel.io/ja/api-docs/entry/host-metrics

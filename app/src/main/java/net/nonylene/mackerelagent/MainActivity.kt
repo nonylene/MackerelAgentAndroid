@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding.model = MainActivityViewModel()
 
         binding.button.setOnClickListener {
-            when (binding.model.status.get().action) {
+            when (binding.model!!.status.get().action) {
                 Action.START -> startGatherMetricsService(this)
                 Action.STOP -> stopGatherMetricsService(this)
                 Action.SETUP -> startActivity(Intent(this, SetupActivity::class.java))
@@ -54,12 +54,12 @@ class MainActivity : AppCompatActivity() {
         }
         val preference = PreferenceManager.getDefaultSharedPreferences(this)
         if (preference.getApiKey(this) == null || preference.getHostId(this) == null) {
-            binding.model.status.set(Status.NOT_CONFIGURED)
+            binding.model!!.status.set(Status.NOT_CONFIGURED)
         } else {
-            if (logs.firstOrNull()?.error ?: false) {
-                binding.model.status.set(Status.ERROR)
+            if (logs.firstOrNull()?.error == true) {
+                binding.model!!.status.set(Status.ERROR)
             }
-            binding.model.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
+            binding.model!!.status.set(if (isGatherMetricsServiceRunning(this)) Status.RUNNING else Status.NOT_RUNNING)
         }
         adapter.logs = logs
     }

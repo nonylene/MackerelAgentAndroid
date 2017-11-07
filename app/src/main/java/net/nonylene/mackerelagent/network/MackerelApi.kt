@@ -2,13 +2,13 @@ package net.nonylene.mackerelagent.network
 
 import android.content.Context
 import android.preference.PreferenceManager
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import net.nonylene.mackerelagent.BuildConfig
 import net.nonylene.mackerelagent.utils.GSON_IGNORE_EXCLUDE_ANNOTATION
 import net.nonylene.mackerelagent.utils.getApiKey
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object MackerelApi {

@@ -23,7 +23,7 @@ class LogRecyclerAdapter : RecyclerView.Adapter<LogRecyclerAdapter.ViewHolder>()
     override fun getItemCount() = logs.count()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.model.setAgentLog(logs[position])
+        holder.binding.model!!.setAgentLog(logs[position])
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
