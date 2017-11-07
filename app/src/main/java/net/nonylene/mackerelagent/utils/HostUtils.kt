@@ -25,7 +25,7 @@ fun createHostSpecRequest(): HostSpecRequest {
     return HostSpecRequest(
             "${Build.MANUFACTURER} ${Build.MODEL}",
             HostSpecRequest.Meta(
-                    BuildConfig.VERSION_NAME,
+                    "MackerelAgentAndroid ${BuildConfig.VERSION_NAME}",
                     getBlockDevicesSpec(),
                     getCPUSpec(),
                     getFileSystemsSpec(),
