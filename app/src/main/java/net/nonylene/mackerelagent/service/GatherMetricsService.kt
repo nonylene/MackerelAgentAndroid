@@ -122,7 +122,7 @@ class GatherMetricsService : Service() {
                 }
 
         error.subscribe {
-            it.printStackTrace()
+//            it.printStackTrace()
             realmLog(createErrorMessage(it), true)
             updateNotification(true)
         }
