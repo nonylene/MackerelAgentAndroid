@@ -4,7 +4,7 @@ import java.io.File
 import java.util.*
 
 fun getLoadAverageMetrics(): LoadAverageMetrics {
-    return LoadAverageMetrics(File("/proc/loadavg").readText().split(" ")[1].toDouble(), Date())
+    return LoadAverageMetrics(File("/proc/loadavg").readLines()[0].split(" ")[1].toDouble(), Date())
 }
 
 @Suppress("unused")

@@ -17,9 +17,9 @@ import java.io.File
 // "os" is not appeared in /proc or properties
 
 fun getKernelSpec(): KernelSpec {
-    val osType = File("/proc/sys/kernel/ostype").readText().trim()
-    val osRelease = File("/proc/sys/kernel/osrelease").readText().trim()
-    val osVersion = File("/proc/sys/kernel/version").readText().trim()
+    val osType = File("/proc/sys/kernel/ostype").readLines()[0].trim()
+    val osRelease = File("/proc/sys/kernel/osrelease").readLines()[0].trim()
+    val osVersion = File("/proc/sys/kernel/version").readLines()[0].trim()
     val machineName = System.getProperty("os.arch")
     return KernelSpec(osType, osRelease, osVersion, machineName, "Android", Build.VERSION.RELEASE)
 }
