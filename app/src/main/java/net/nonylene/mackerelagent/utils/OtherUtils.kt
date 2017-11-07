@@ -19,3 +19,5 @@ val GSON_IGNORE_EXCLUDE_ANNOTATION = GsonBuilder().setExclusionStrategies(object
     override fun shouldSkipClass(clazz: Class<*>?) = false
     override fun shouldSkipField(f: FieldAttributes?) = f?.getAnnotation(Exclude::class.java) != null
 }).create()
+
+val MACKEREL_API_DOMAIN = "api.mackerelio.com"

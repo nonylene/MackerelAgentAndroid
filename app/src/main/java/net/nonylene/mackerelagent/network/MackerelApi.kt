@@ -4,6 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import net.nonylene.mackerelagent.BuildConfig
 import net.nonylene.mackerelagent.utils.GSON_IGNORE_EXCLUDE_ANNOTATION
+import net.nonylene.mackerelagent.utils.MACKEREL_API_DOMAIN
 import net.nonylene.mackerelagent.utils.getApiKey
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -25,7 +26,7 @@ object MackerelApi {
 
             val builder = OkHttpClient.Builder()
                     .addInterceptor { chain ->
-                        val request = if (chain.request().url().host() == "mackerel.io") {
+                        val request = if (chain.request().url().host() == MACKEREL_API_DOMAIN) {
                             apiKeyGetter()?.let {
                                 chain.request().newBuilder()
                                         .addHeader("X-Api-Key", it)
@@ -45,7 +46,7 @@ object MackerelApi {
 
             val retrofit = Retrofit.Builder()
                     .client(builder.build())
-                    .baseUrl("https://api.mackerelio.com/")
+                    .baseUrl("https://${MACKEREL_API_DOMAIN}/")
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(GSON_IGNORE_EXCLUDE_ANNOTATION))
                     .build()
